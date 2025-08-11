@@ -41,7 +41,7 @@ class DiagnosisSystem {
         $sanitized['symptoms'] = array_map(function($symptom) {
             return strip_tags(strtolower(trim($symptom)));
         }, $data['symptoms'] ?? []);
-        $sanitized['age'] = filter_var($data['age'] ?? 'adult', FILTER_SANITIZE_STRING);
+        $sanitized['age'] = strip_tags($data['age'] ?? 'adult');
         $sanitized['riskFactors'] = array_filter($data['riskFactors'] ?? [], function($factor) {
             return in_array($factor, array_keys(self::SEVERITY_MODIFIERS['risk_factor']));
         });
