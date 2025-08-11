@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jan 09, 2025 at 12:16 PM
+-- Generation Time: Aug 11, 2025 at 10:02 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -28,61 +28,231 @@ SET time_zone = "+00:00";
 --
 
 CREATE TABLE `conditions` (
-  `id` int(11) NOT NULL,
-  `name` varchar(100) NOT NULL,
-  `description` text DEFAULT NULL,
-  `symptoms` text DEFAULT NULL,
-  `recommendations` text DEFAULT NULL
+  `condition_id` int(11) NOT NULL,
+  `name` varchar(255) NOT NULL,
+  `description` text NOT NULL,
+  `severity_base` int(11) DEFAULT 50,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `conditions`
 --
 
-INSERT INTO `conditions` (`id`, `name`, `description`, `symptoms`, `recommendations`) VALUES
-(1, 'Common Cold', 'A viral infection of the upper respiratory tract', 'Runny nose, sneezing, congestion, sore throat, cough, mild fatigue', 'Rest, stay hydrated, over-the-counter cold medications, saltwater gargle'),
-(2, 'Influenza', 'A viral infection that attacks your respiratory system', 'High fever, severe body aches, fatigue, headache, dry cough, chills', 'Rest, fluids, antiviral medications if prescribed, avoid contact with others'),
-(3, 'Migraine', 'A severe headache disorder causing intense throbbing pain', 'Severe headache, sensitivity to light and sound, nausea, visual auras', 'Rest in dark room, stay hydrated, prescribed medications, identify triggers'),
-(4, 'Gastroenteritis', 'Inflammation of the digestive system', 'Nausea, vomiting, diarrhea, stomach cramps, mild fever', 'Stay hydrated, bland diet, rest, probiotics'),
-(5, 'Hypertension', 'High blood pressure condition', 'Headaches, shortness of breath, nosebleeds, chest pain', 'Regular exercise, low-sodium diet, medication if prescribed, stress management'),
-(6, 'Type 2 Diabetes', 'Metabolic disorder affecting blood sugar levels', 'Increased thirst, frequent urination, fatigue, blurred vision', 'Regular blood sugar monitoring, balanced diet, exercise, medications'),
-(7, 'Asthma', 'Chronic respiratory condition', 'Wheezing, shortness of breath, chest tightness, coughing', 'Use prescribed inhalers, avoid triggers, regular check-ups'),
-(8, 'Acid Reflux', 'Digestive disorder causing stomach acid backflow', 'Heartburn, chest pain, difficulty swallowing, regurgitation', 'Avoid trigger foods, eat smaller meals, maintain healthy weight'),
-(9, 'Allergic Rhinitis', 'Allergic reaction affecting nasal passages', 'Sneezing, runny nose, itchy eyes, congestion', 'Avoid allergens, antihistamines, nasal sprays'),
-(10, 'Bronchitis', 'Inflammation of bronchial tubes', 'Persistent cough, chest congestion, fatigue, mild fever', 'Rest, increased fluid intake, humidifier use, over-the-counter medications'),
-(11, 'Anxiety Disorder', 'Mental health condition causing excessive worry', 'Excessive worry, restlessness, difficulty concentrating, sleep problems', 'Therapy, stress management, medication if prescribed, regular exercise'),
-(12, 'Depression', 'Mental health disorder affecting mood', 'Persistent sadness, loss of interest, sleep changes, fatigue', 'Professional counseling, medication if prescribed, regular exercise, social support'),
-(13, 'Osteoarthritis', 'Degenerative joint disease', 'Joint pain, stiffness, reduced flexibility, swelling', 'Physical therapy, exercise, weight management, pain medications'),
-(14, 'Sinusitis', 'Inflammation of sinus cavities', 'Facial pain, nasal congestion, headache, reduced smell', 'Nasal irrigation, decongestants, antibiotics if bacterial'),
-(15, 'Urinary Tract Infection', 'Infection in urinary system', 'Frequent urination, burning sensation, cloudy urine, pelvic pain', 'Antibiotics, increased fluid intake, cranberry supplements'),
-(16, 'Insomnia', 'Sleep disorder', 'Difficulty falling asleep, waking up frequently, daytime fatigue', 'Regular sleep schedule, relaxation techniques, avoid caffeine'),
-(17, 'Dermatitis', 'Skin inflammation', 'Itching, rash, redness, skin inflammation', 'Moisturize regularly, avoid triggers, topical treatments'),
-(18, 'Vertigo', 'Balance disorder', 'Dizziness, spinning sensation, nausea, balance problems', 'Vestibular rehabilitation, medications, lifestyle modifications'),
-(19, 'Hypothyroidism', 'Underactive thyroid condition', 'Fatigue, weight gain, cold sensitivity, dry skin', 'Thyroid hormone replacement, regular monitoring, healthy diet'),
-(20, 'Carpal Tunnel Syndrome', 'Nerve compression in wrist', 'Wrist pain, numbness, tingling in fingers, weakness', 'Wrist splints, ergonomic adjustments, physical therapy'),
-(21, 'Irritable Bowel Syndrome', 'Digestive disorder affecting bowel function', 'Abdominal pain, bloating, diarrhea or constipation', 'Dietary changes, stress management, fiber supplements'),
-(22, 'Tension Headache', 'Common headache type', 'Dull head pain, tight sensation, neck stiffness', 'Pain relievers, stress management, proper posture'),
-(23, 'Conjunctivitis', 'Eye inflammation', 'Red eyes, itching, discharge, tearing', 'Eye drops, warm compresses, avoid touching eyes'),
-(24, 'Gout', 'Form of inflammatory arthritis', 'Severe joint pain, swelling, redness, limited movement', 'Medications, dietary changes, weight management'),
-(25, 'Peptic Ulcer', 'Sores in digestive tract lining', 'Stomach pain, bloating, heartburn, nausea', 'Antibiotics if H. pylori present, acid reducers, dietary changes'),
-(26, 'Tonsillitis', 'Inflammation of tonsils', 'Sore throat, difficulty swallowing, fever, swollen lymph nodes', 'Rest, warm liquids, pain relievers, antibiotics if bacterial'),
-(27, 'Sciatica', 'Nerve pain condition', 'Lower back pain, leg pain, numbness, weakness', 'Physical therapy, pain management, exercise, proper posture'),
-(28, 'Hypoglycemia', 'Low blood sugar condition', 'Shakiness, sweating, confusion, hunger', 'Regular meals, glucose monitoring, balanced diet'),
-(29, 'Plantar Fasciitis', 'Foot inflammation condition', 'Heel pain, arch pain, morning foot stiffness', 'Stretching exercises, supportive footwear, ice therapy'),
-(30, 'Anemia', 'Blood disorder affecting red blood cells', 'Fatigue, weakness, shortness of breath, pale skin', 'Iron supplements, dietary changes, vitamin B12 if needed');
+INSERT INTO `conditions` (`condition_id`, `name`, `description`, `severity_base`, `created_at`, `updated_at`) VALUES
+(1, 'Hypertension', 'High blood pressure condition where blood pressure is consistently too high', 60, '2025-05-22 11:08:30', '2025-05-22 11:08:30'),
+(2, 'Coronary Artery Disease', 'Narrowing of coronary arteries reducing blood flow to the heart', 75, '2025-05-22 11:08:30', '2025-05-22 11:08:30'),
+(3, 'Asthma', 'Chronic condition causing airways to become inflamed, narrow and swell', 55, '2025-05-22 11:08:30', '2025-05-22 11:08:30'),
+(4, 'COPD', 'Chronic inflammatory lung disease causing obstructed airflow', 70, '2025-05-22 11:08:30', '2025-05-22 11:08:30'),
+(5, 'Migraine', 'Severe recurring headache, often with nausea and sensitivity to light', 45, '2025-05-22 11:08:30', '2025-05-22 11:08:30'),
+(6, 'Parkinsons Disease', 'Progressive nervous system disorder affecting movement', 80, '2025-05-22 11:08:30', '2025-05-22 11:08:30'),
+(7, 'Type 2 Diabetes', 'Chronic condition affecting how body metabolizes glucose', 65, '2025-05-22 11:08:30', '2025-05-22 11:08:30'),
+(8, 'Hypothyroidism', 'Condition where thyroid gland doesnt produce enough hormones', 50, '2025-05-22 11:08:30', '2025-05-22 11:08:30'),
+(9, 'Rheumatoid Arthritis', 'Autoimmune disorder causing joint inflammation', 70, '2025-05-22 11:10:20', '2025-05-22 11:10:20'),
+(10, 'Lupus', 'Systemic autoimmune disease affecting multiple organs', 75, '2025-05-22 11:10:20', '2025-05-22 11:10:20'),
+(11, 'Multiple Sclerosis', 'Immune system attacks protective covering of nerves', 80, '2025-05-22 11:10:20', '2025-05-22 11:10:20'),
+(12, 'Psoriasis', 'Immune-mediated disease causing skin inflammation', 50, '2025-05-22 11:10:20', '2025-05-22 11:10:20'),
+(13, 'Crohns Disease', 'Inflammatory bowel disease affecting digestive tract', 70, '2025-05-22 11:10:20', '2025-05-22 11:10:20'),
+(14, 'Ulcerative Colitis', 'Inflammatory bowel disease affecting colon and rectum', 65, '2025-05-22 11:10:20', '2025-05-22 11:10:20'),
+(15, 'Celiac Disease', 'Immune reaction to eating gluten', 60, '2025-05-22 11:10:20', '2025-05-22 11:10:20'),
+(16, 'GERD', 'Chronic acid reflux disease', 45, '2025-05-22 11:10:20', '2025-05-22 11:10:20'),
+(17, 'IBS', 'Irritable Bowel Syndrome affecting large intestine', 40, '2025-05-22 11:10:20', '2025-05-22 11:10:20'),
+(18, 'Major Depression', 'Severe depressive disorder affecting daily life', 70, '2025-05-22 11:10:20', '2025-05-22 11:10:20'),
+(19, 'Generalized Anxiety Disorder', 'Persistent and excessive worry', 65, '2025-05-22 11:10:20', '2025-05-22 11:10:20'),
+(20, 'Bipolar Disorder', 'Condition causing extreme mood swings', 75, '2025-05-22 11:10:20', '2025-05-22 11:10:20'),
+(21, 'PTSD', 'Post-traumatic stress disorder', 70, '2025-05-22 11:10:20', '2025-05-22 11:10:20'),
+(22, 'Hyperthyroidism', 'Overactive thyroid gland', 60, '2025-05-22 11:10:20', '2025-05-22 11:10:20'),
+(23, 'Cushings Syndrome', 'High levels of cortisol in the body', 70, '2025-05-22 11:10:20', '2025-05-22 11:10:20'),
+(24, 'Addisons Disease', 'Inadequate production of certain hormones', 75, '2025-05-22 11:10:20', '2025-05-22 11:10:20'),
+(25, 'Pneumonia', 'Infection causing inflammation of air sacs in lungs', 70, '2025-05-22 11:10:20', '2025-05-22 11:10:20'),
+(26, 'Bronchitis', 'Inflammation of bronchial tubes', 55, '2025-05-22 11:10:20', '2025-05-22 11:10:20'),
+(27, 'Sleep Apnea', 'Breathing repeatedly stops during sleep', 60, '2025-05-22 11:10:20', '2025-05-22 11:10:20');
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `diagnoses`
+-- Table structure for table `condition_symptoms`
 --
 
-CREATE TABLE `diagnoses` (
-  `id` int(11) NOT NULL,
+CREATE TABLE `condition_symptoms` (
+  `condition_id` int(11) NOT NULL,
+  `symptom_id` int(11) NOT NULL,
+  `weight` float DEFAULT 1
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `condition_symptoms`
+--
+
+INSERT INTO `condition_symptoms` (`condition_id`, `symptom_id`, `weight`) VALUES
+(1, 3, 0.7),
+(1, 5, 0.8),
+(1, 10, 0.6),
+(3, 5, 1),
+(3, 6, 0.7),
+(3, 7, 0.9),
+(7, 2, 0.8),
+(7, 4, 0.5),
+(7, 9, 0.7),
+(9, 2, 0.8),
+(9, 14, 1),
+(9, 16, 0.7),
+(13, 17, 1),
+(13, 19, 0.9),
+(13, 21, 0.7),
+(18, 26, 1),
+(18, 27, 0.9),
+(18, 28, 0.8);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `diagnosis`
+--
+
+CREATE TABLE `diagnosis` (
+  `flddiagnosisid` int(11) NOT NULL,
+  `flduserid` int(11) DEFAULT NULL,
+  `fldconditionid` int(11) DEFAULT NULL,
+  `flddiagnosisdate` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `diagnosis_history`
+--
+
+CREATE TABLE `diagnosis_history` (
+  `diagnosis_id` int(11) NOT NULL,
   `user_id` int(11) DEFAULT NULL,
   `condition_id` int(11) DEFAULT NULL,
+  `severity` int(11) DEFAULT NULL,
+  `main_symptom` varchar(255) DEFAULT NULL,
+  `additional_symptoms` text DEFAULT NULL,
   `diagnosis_date` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `diagnosis_history`
+--
+
+INSERT INTO `diagnosis_history` (`diagnosis_id`, `user_id`, `condition_id`, `severity`, `main_symptom`, `additional_symptoms`, `diagnosis_date`) VALUES
+(1, 1, 1, 65, 'Headache', 'Dizziness, Shortness of Breath', '2025-05-22 11:08:30'),
+(2, 2, 3, 70, 'Shortness of Breath', 'Chest Pain, Chronic Cough', '2025-05-22 11:08:30'),
+(3, 3, 7, 55, 'Fatigue', 'Increased thirst, Frequent urination', '2025-05-22 11:08:30');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `recommendations`
+--
+
+CREATE TABLE `recommendations` (
+  `recommendation_id` int(11) NOT NULL,
+  `condition_id` int(11) DEFAULT NULL,
+  `recommendation` text NOT NULL,
+  `priority` int(11) DEFAULT 1
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `recommendations`
+--
+
+INSERT INTO `recommendations` (`recommendation_id`, `condition_id`, `recommendation`, `priority`) VALUES
+(1, 1, 'Monitor blood pressure regularly', 1),
+(2, 1, 'Reduce sodium intake', 2),
+(3, 1, 'Maintain regular physical activity', 3),
+(4, 3, 'Keep rescue inhaler readily available', 1),
+(5, 3, 'Avoid known triggers', 2),
+(6, 3, 'Follow prescribed medication schedule', 3),
+(7, 7, 'Monitor blood glucose levels regularly', 1),
+(8, 7, 'Maintain a balanced diet', 2),
+(9, 7, 'Exercise regularly as advised by healthcare provider', 3),
+(10, 9, 'Take prescribed anti-inflammatory medications', 1),
+(11, 9, 'Engage in gentle exercise as tolerated', 2),
+(12, 9, 'Protect joints during daily activities', 3),
+(13, 13, 'Follow prescribed medication regimen', 1),
+(14, 13, 'Maintain food diary to identify triggers', 2),
+(15, 13, 'Stay hydrated and avoid trigger foods', 3),
+(16, 18, 'Continue prescribed antidepressant medication', 1),
+(17, 18, 'Engage in regular psychotherapy sessions', 2),
+(18, 18, 'Maintain regular sleep schedule', 3);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `symptoms`
+--
+
+CREATE TABLE `symptoms` (
+  `symptom_id` int(11) NOT NULL,
+  `name` varchar(255) NOT NULL,
+  `category` varchar(50) NOT NULL,
+  `description` text DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `symptoms`
+--
+
+INSERT INTO `symptoms` (`symptom_id`, `name`, `category`, `description`, `created_at`) VALUES
+(1, 'Fever', 'general', 'Elevated body temperature above 38°C (100.4°F)', '2025-05-22 11:08:30'),
+(2, 'Fatigue', 'general', 'Feeling of tiredness and reduced energy', '2025-05-22 11:08:30'),
+(3, 'Headache', 'pain', 'Pain in any region of the head', '2025-05-22 11:08:30'),
+(4, 'Nausea', 'digestive', 'Sensation of unease in the stomach with urge to vomit', '2025-05-22 11:08:30'),
+(5, 'Shortness of Breath', 'respiratory', 'Difficulty breathing or dyspnea', '2025-05-22 11:08:30'),
+(6, 'Chest Pain', 'pain', 'Discomfort or pain in the chest area', '2025-05-22 11:08:30'),
+(7, 'Chronic Cough', 'respiratory', 'Persistent cough lasting more than 8 weeks', '2025-05-22 11:08:30'),
+(8, 'Irregular Heartbeat', 'cardiovascular', 'Arrhythmia or abnormal heart rhythm', '2025-05-22 11:08:30'),
+(9, 'Swelling', 'cardiovascular', 'Edema in extremities', '2025-05-22 11:08:30'),
+(10, 'Dizziness', 'neurological', 'Feeling light-headed or unsteady', '2025-05-22 11:08:30'),
+(11, 'Memory Loss', 'neurological', 'Difficulty remembering recent or past events', '2025-05-22 11:08:30'),
+(12, 'Tremors', 'neurological', 'Involuntary shaking movements', '2025-05-22 11:08:30'),
+(13, 'Joint Pain', 'pain', 'Discomfort or pain in any joint', '2025-05-22 11:08:54'),
+(14, 'Back Pain', 'pain', 'Pain anywhere in the back or spine', '2025-05-22 11:08:54'),
+(15, 'Muscle Pain', 'pain', 'Generalized or localized muscle pain', '2025-05-22 11:08:54'),
+(16, 'Abdominal Pain', 'pain', 'Pain in the stomach or abdomen area', '2025-05-22 11:08:54'),
+(17, 'Bloating', 'digestive', 'Swelling or distention of the abdomen', '2025-05-22 11:08:54'),
+(18, 'Diarrhea', 'digestive', 'Loose, watery stools occurring more frequently', '2025-05-22 11:08:54'),
+(19, 'Constipation', 'digestive', 'Difficult or infrequent bowel movements', '2025-05-22 11:08:54'),
+(20, 'Acid Reflux', 'digestive', 'Burning sensation in chest caused by stomach acid', '2025-05-22 11:08:54'),
+(21, 'Loss of Appetite', 'digestive', 'Reduced desire to eat', '2025-05-22 11:08:54'),
+(22, 'Rash', 'skin', 'Area of irritated or swollen skin', '2025-05-22 11:08:54'),
+(23, 'Itching', 'skin', 'Irritating sensation causing desire to scratch', '2025-05-22 11:08:54'),
+(24, 'Hives', 'skin', 'Raised, itchy welts on the skin', '2025-05-22 11:08:54'),
+(25, 'Skin Discoloration', 'skin', 'Changes in skin color or pigmentation', '2025-05-22 11:08:54'),
+(26, 'Anxiety', 'mental', 'Feeling of worry, nervousness, or unease', '2025-05-22 11:08:54'),
+(27, 'Depression', 'mental', 'Persistent feeling of sadness and loss of interest', '2025-05-22 11:08:54'),
+(28, 'Sleep Problems', 'mental', 'Difficulty falling or staying asleep', '2025-05-22 11:08:54'),
+(29, 'Mood Changes', 'mental', 'Significant changes in emotional state', '2025-05-22 11:08:54'),
+(30, 'Weight Loss', 'general', 'Unexplained decrease in body weight', '2025-05-22 11:08:54'),
+(31, 'Weight Gain', 'general', 'Unexplained increase in body weight', '2025-05-22 11:08:54'),
+(32, 'Night Sweats', 'general', 'Excessive sweating during night', '2025-05-22 11:08:54'),
+(33, 'Weakness', 'general', 'General loss of strength or energy', '2025-05-22 11:08:54'),
+(34, 'Joint Pain', 'pain', 'Discomfort or pain in any joint', '2025-05-22 11:10:20'),
+(35, 'Back Pain', 'pain', 'Pain anywhere in the back or spine', '2025-05-22 11:10:20'),
+(36, 'Muscle Pain', 'pain', 'Generalized or localized muscle pain', '2025-05-22 11:10:20'),
+(37, 'Abdominal Pain', 'pain', 'Pain in the stomach or abdomen area', '2025-05-22 11:10:20'),
+(38, 'Bloating', 'digestive', 'Swelling or distention of the abdomen', '2025-05-22 11:10:20'),
+(39, 'Diarrhea', 'digestive', 'Loose, watery stools occurring more frequently', '2025-05-22 11:10:20'),
+(40, 'Constipation', 'digestive', 'Difficult or infrequent bowel movements', '2025-05-22 11:10:20'),
+(41, 'Acid Reflux', 'digestive', 'Burning sensation in chest caused by stomach acid', '2025-05-22 11:10:20'),
+(42, 'Loss of Appetite', 'digestive', 'Reduced desire to eat', '2025-05-22 11:10:20'),
+(43, 'Rash', 'skin', 'Area of irritated or swollen skin', '2025-05-22 11:10:20'),
+(44, 'Itching', 'skin', 'Irritating sensation causing desire to scratch', '2025-05-22 11:10:20'),
+(45, 'Hives', 'skin', 'Raised, itchy welts on the skin', '2025-05-22 11:10:20'),
+(46, 'Skin Discoloration', 'skin', 'Changes in skin color or pigmentation', '2025-05-22 11:10:20'),
+(47, 'Anxiety', 'mental', 'Feeling of worry, nervousness, or unease', '2025-05-22 11:10:20'),
+(48, 'Depression', 'mental', 'Persistent feeling of sadness and loss of interest', '2025-05-22 11:10:20'),
+(49, 'Sleep Problems', 'mental', 'Difficulty falling or staying asleep', '2025-05-22 11:10:20'),
+(50, 'Mood Changes', 'mental', 'Significant changes in emotional state', '2025-05-22 11:10:20'),
+(51, 'Weight Loss', 'general', 'Unexplained decrease in body weight', '2025-05-22 11:10:20'),
+(52, 'Weight Gain', 'general', 'Unexplained increase in body weight', '2025-05-22 11:10:20'),
+(53, 'Night Sweats', 'general', 'Excessive sweating during night', '2025-05-22 11:10:20'),
+(54, 'Weakness', 'general', 'General loss of strength or energy', '2025-05-22 11:10:20');
 
 -- --------------------------------------------------------
 
@@ -91,11 +261,20 @@ CREATE TABLE `diagnoses` (
 --
 
 CREATE TABLE `users` (
-  `id` int(11) NOT NULL,
-  `username` varchar(50) NOT NULL,
-  `email` varchar(100) NOT NULL,
-  `password` varchar(255) NOT NULL,
-  `full_name` varchar(100) DEFAULT NULL,
+  `flduserid` int(11) NOT NULL,
+  `flduserimage` varchar(255) DEFAULT NULL,
+  `flduserfirstname` varchar(255) DEFAULT NULL,
+  `flduserlastname` varchar(255) DEFAULT NULL,
+  `flduserstreetaddress` varchar(255) DEFAULT NULL,
+  `flduserlocalarea` varchar(255) DEFAULT NULL,
+  `fldusercity` varchar(255) DEFAULT NULL,
+  `flduserzone` varchar(255) DEFAULT NULL,
+  `fldusercountry` varchar(255) DEFAULT NULL,
+  `flduserpostalcode` varchar(10) DEFAULT NULL,
+  `flduseremail` varchar(100) DEFAULT NULL,
+  `flduserphonenumber` varchar(15) DEFAULT NULL,
+  `flduseridnumber` varchar(13) DEFAULT NULL,
+  `flduserpassword` varchar(255) DEFAULT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -107,23 +286,48 @@ CREATE TABLE `users` (
 -- Indexes for table `conditions`
 --
 ALTER TABLE `conditions`
-  ADD PRIMARY KEY (`id`);
+  ADD PRIMARY KEY (`condition_id`);
 
 --
--- Indexes for table `diagnoses`
+-- Indexes for table `condition_symptoms`
 --
-ALTER TABLE `diagnoses`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `user_id` (`user_id`),
+ALTER TABLE `condition_symptoms`
+  ADD PRIMARY KEY (`condition_id`,`symptom_id`),
+  ADD KEY `symptom_id` (`symptom_id`);
+
+--
+-- Indexes for table `diagnosis`
+--
+ALTER TABLE `diagnosis`
+  ADD PRIMARY KEY (`flddiagnosisid`),
+  ADD KEY `user_id` (`flduserid`),
+  ADD KEY `condition_id` (`fldconditionid`);
+
+--
+-- Indexes for table `diagnosis_history`
+--
+ALTER TABLE `diagnosis_history`
+  ADD PRIMARY KEY (`diagnosis_id`),
   ADD KEY `condition_id` (`condition_id`);
+
+--
+-- Indexes for table `recommendations`
+--
+ALTER TABLE `recommendations`
+  ADD PRIMARY KEY (`recommendation_id`),
+  ADD KEY `condition_id` (`condition_id`);
+
+--
+-- Indexes for table `symptoms`
+--
+ALTER TABLE `symptoms`
+  ADD PRIMARY KEY (`symptom_id`);
 
 --
 -- Indexes for table `users`
 --
 ALTER TABLE `users`
-  ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `username` (`username`),
-  ADD UNIQUE KEY `email` (`email`);
+  ADD PRIMARY KEY (`flduserid`);
 
 --
 -- AUTO_INCREMENT for dumped tables
@@ -133,30 +337,60 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `conditions`
 --
 ALTER TABLE `conditions`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=31;
+  MODIFY `condition_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=28;
 
 --
--- AUTO_INCREMENT for table `diagnoses`
+-- AUTO_INCREMENT for table `diagnosis`
 --
-ALTER TABLE `diagnoses`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+ALTER TABLE `diagnosis`
+  MODIFY `flddiagnosisid` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `diagnosis_history`
+--
+ALTER TABLE `diagnosis_history`
+  MODIFY `diagnosis_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+
+--
+-- AUTO_INCREMENT for table `recommendations`
+--
+ALTER TABLE `recommendations`
+  MODIFY `recommendation_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
+
+--
+-- AUTO_INCREMENT for table `symptoms`
+--
+ALTER TABLE `symptoms`
+  MODIFY `symptom_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=55;
 
 --
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `flduserid` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- Constraints for dumped tables
 --
 
 --
--- Constraints for table `diagnoses`
+-- Constraints for table `condition_symptoms`
 --
-ALTER TABLE `diagnoses`
-  ADD CONSTRAINT `diagnoses_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`),
-  ADD CONSTRAINT `diagnoses_ibfk_2` FOREIGN KEY (`condition_id`) REFERENCES `conditions` (`id`);
+ALTER TABLE `condition_symptoms`
+  ADD CONSTRAINT `condition_symptoms_ibfk_1` FOREIGN KEY (`condition_id`) REFERENCES `conditions` (`condition_id`),
+  ADD CONSTRAINT `condition_symptoms_ibfk_2` FOREIGN KEY (`symptom_id`) REFERENCES `symptoms` (`symptom_id`);
+
+--
+-- Constraints for table `diagnosis_history`
+--
+ALTER TABLE `diagnosis_history`
+  ADD CONSTRAINT `diagnosis_history_ibfk_1` FOREIGN KEY (`condition_id`) REFERENCES `conditions` (`condition_id`);
+
+--
+-- Constraints for table `recommendations`
+--
+ALTER TABLE `recommendations`
+  ADD CONSTRAINT `recommendations_ibfk_1` FOREIGN KEY (`condition_id`) REFERENCES `conditions` (`condition_id`);
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
