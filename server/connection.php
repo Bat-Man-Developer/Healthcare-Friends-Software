@@ -1,4 +1,5 @@
 <?php
+// Connection API
 // Database configuration
 $host = 'localhost';
 $username = 'root';

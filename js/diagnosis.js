@@ -1,9 +1,10 @@
+// Diagnosis JS
 const durationMap = {
     'hours': '1',
     'days_1_3': '2',
     'days_4_7': '3',
     'weeks_1_2': '4',
-    'weeks_more': '4'
+    'weeks_more': '5'
 };
 
 document.getElementById('diagnosisForm').addEventListener('submit', async (e) => {
@@ -13,34 +14,33 @@ document.getElementById('diagnosisForm').addEventListener('submit', async (e) =>
     const checkedSymptoms = Array.from(document.querySelectorAll('input[name="symptoms"]:checked'))
         .map(cb => cb.value);
 
-    // Get risk factors
-    const riskFactors = [];
-    if (document.querySelector('input[name="conditions"][value="diabetes"]').checked) {
-        riskFactors.push('diabetes');
-    }
-    if (document.querySelector('input[name="conditions"][value="hypertension"]').checked) {
-        riskFactors.push('hypertension');
-    }
-
-    // Calculate age group based on date of birth
-    const dob = document.getElementById('dateOfBirth').value;
-    const age = calculateAgeGroup(dob);
+    // Get all checked conditions
+    const checkedConditions = Array.from(document.querySelectorAll('input[name="conditions"]:checked'))
+        .map(cb => cb.value);
 
     // Prepare the data object matching backend expectations
     const formData = {
-        mainSymptom: document.getElementById('mainSymptom').value.toLowerCase(),
+        mainSymptom: document.getElementById('mainSymptom').value,
         symptoms: checkedSymptoms,
-        duration: document.getElementById('duration').value,
-        age: age,
-        riskFactors: riskFactors,
-        userId: '<?php echo isset($_SESSION["flduserid"]) ? $_SESSION["flduserid"] : ""; ?>'
+        duration: document.getElementById('symptomDuration').value,
+        severity: document.getElementById('severity').value,
+        ageRange: document.getElementById('ageRange').value,
+        biologicalSex: document.getElementById('biologicalSex').value,
+        conditions: checkedConditions,
+        smoking: document.getElementById('smoking').value,
+        alcohol: document.getElementById('alcohol').value,
+        exercise: document.getElementById('exercise').value,
+        allergies: document.getElementById('allergies').value,
+        currentMedications: document.getElementById('currentMedications').value,
+        symptomDescription: document.getElementById('symptomDescription').value
     };
 
     try {
         const response = await fetch('server/getdiagnosis.php', {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
             },
             body: JSON.stringify(formData)
         });
@@ -59,7 +59,7 @@ document.getElementById('diagnosisForm').addEventListener('submit', async (e) =>
         document.querySelector('.results-container').style.display = 'block';
 
         // Update severity indicator
-        updateSeverityIndicator(result.severity);
+        updateSeverityIndicator(result.urgency_level);
 
         // Update diagnosis result
         updateDiagnosisResult(result);
@@ -68,90 +68,100 @@ document.getElementById('diagnosisForm').addEventListener('submit', async (e) =>
         updateRecommendations(result.recommendations);
 
         // Show urgent care warning if needed
-        if (result.urgent) {
+        if (result.seek_immediate_care) {
             showUrgentCareWarning();
         }
 
-        // Show differential diagnoses if available
-        if (result.differential_diagnoses) {
-            updateDifferentialDiagnoses(result.differential_diagnoses);
+        // Show alternative possibilities if available
+        if (result.alternative_possibilities && result.alternative_possibilities.length > 0) {
+            updateAlternativePossibilities(result.alternative_possibilities);
         }
+
+        // Scroll to results
+        document.querySelector('.results-container').scrollIntoView({ behavior: 'smooth' });
 
     } catch (error) {
         console.error('Error:', error);
-        showError('An error occurred while processing your diagnosis: ' + error.message);
+        showError('An error occurred while processing your assessment: ' + error.message);
     }
 });
 
 // Helper functions
-function calculateAgeGroup(dateOfBirth) {
-    const today = new Date();
-    const birthDate = new Date(dateOfBirth);
-    const age = today.getFullYear() - birthDate.getFullYear();
-    
-    if (age < 18) return 'child';
-    if (age > 65) return 'elderly';
-    return 'adult';
-}
-
-function updateSeverityIndicator(severity) {
+function updateSeverityIndicator(urgencyLevel) {
     const severityFill = document.getElementById('severityFill');
     const severityText = document.getElementById('severityText');
     
-    severityFill.style.width = `${severity}%`;
-    severityText.textContent = getSeverityText(severity);
+    if (severityFill) {
+        severityFill.style.width = `${urgencyLevel}%`;
+        
+        // Update color based on urgency level
+        if (urgencyLevel > 70) {
+            severityFill.style.backgroundColor = '#ef4444'; // red
+        } else if (urgencyLevel > 40) {
+            severityFill.style.backgroundColor = '#f59e0b'; // yellow
+        } else {
+            severityFill.style.backgroundColor = '#10b981'; // green
+        }
+    }
     
-    // Update color based on severity
-    if (severity > 70) {
-        severityFill.style.backgroundColor = '#ef4444'; // red
-    } else if (severity > 40) {
-        severityFill.style.backgroundColor = '#f59e0b'; // yellow
-    } else {
-        severityFill.style.backgroundColor = '#10b981'; // green
+    if (severityText) {
+        severityText.textContent = getUrgencyText(urgencyLevel);
     }
 }
 
 function updateDiagnosisResult(result) {
-    const diagnosisResult = document.getElementById('diagnosisResult');
-    diagnosisResult.innerHTML = `
-        <div class="diagnosis-card p-4 bg-white rounded-lg shadow-md">
-            <h3 class="text-xl font-semibold mb-2">Primary Diagnosis</h3>
-            <p class="text-lg mb-2">${result.condition}</p>
-            <p class="text-gray-600">${result.description}</p>
-            <div class="mt-2">
-                <span class="inline-block bg-blue-100 text-blue-800 px-2 py-1 rounded">
-                    Confidence: ${result.confidence}%
-                </span>
+    const assessmentResult = document.getElementById('assessmentResult');
+    if (assessmentResult) {
+        assessmentResult.innerHTML = `
+            <div class="diagnosis-card p-4 bg-white rounded-lg shadow-md">
+                <h3 class="text-xl font-semibold mb-2">Assessment Information</h3>
+                <p class="text-lg mb-2">${result.possible_condition}</p>
+                <p class="text-gray-600">${result.information}</p>
+                <div class="mt-2">
+                    <span class="inline-block bg-blue-100 text-blue-800 px-2 py-1 rounded">
+                        Match Confidence: ${result.match_confidence}%
+                    </span>
+                </div>
+                <div class="mt-4 p-3 bg-yellow-50 border-l-4 border-yellow-400">
+                    <p class="text-sm text-yellow-800">
+                        <strong>Disclaimer:</strong> ${result.disclaimer}
+                    </p>
+                </div>
             </div>
-        </div>
-    `;
+        `;
+    }
 }
 
 function updateRecommendations(recommendations) {
     const recommendationsList = document.getElementById('recommendationsList');
-    recommendationsList.innerHTML = recommendations.map(rec => `
-        <li class="recommendation-item">
-            <div class="recommendation-icon">💡</div>
-            <div class="recommendation-text">${rec}</div>
-        </li>
-    `).join('');
+    if (recommendationsList) {
+        recommendationsList.innerHTML = recommendations.map(rec => `
+            <li class="recommendation-item">
+                <div class="recommendation-icon">💡</div>
+                <div class="recommendation-text">${rec}</div>
+            </li>
+        `).join('');
+    }
 }
 
-function updateDifferentialDiagnoses(differentials) {
-    const differentialSection = document.createElement('div');
-    differentialSection.className = 'mt-4';
-    differentialSection.innerHTML = `
-        <h3 class="text-lg font-semibold mb-2">Other Possible Conditions</h3>
-        <ul class="space-y-2">
-            ${differentials.map(diff => `
-                <li class="flex items-center justify-between p-2 bg-gray-50 rounded">
-                    <span>${diff.condition}</span>
-                    <span class="text-sm text-gray-500">Confidence: ${diff.confidence}%</span>
-                </li>
-            `).join('')}
-        </ul>
-    `;
-    document.getElementById('diagnosisResult').appendChild(differentialSection);
+function updateAlternativePossibilities(alternatives) {
+    const assessmentResult = document.getElementById('assessmentResult');
+    if (assessmentResult) {
+        const alternativeSection = document.createElement('div');
+        alternativeSection.className = 'mt-4';
+        alternativeSection.innerHTML = `
+            <h3 class="text-lg font-semibold mb-2">Other Possible Conditions</h3>
+            <ul class="space-y-2">
+                ${alternatives.map(alt => `
+                    <li class="flex items-center justify-between p-2 bg-gray-50 rounded">
+                        <span>${alt.condition}</span>
+                        <span class="text-sm text-gray-500">Confidence: ${alt.confidence}%</span>
+                    </li>
+                `).join('')}
+            </ul>
+        `;
+        assessmentResult.appendChild(alternativeSection);
+    }
 }
 
 function showUrgentCareWarning() {
@@ -166,39 +176,43 @@ function showUrgentCareWarning() {
             </div>
         </div>
     `;
-    document.querySelector('.results-container').insertBefore(warning, document.querySelector('.severity-container'));
+    
+    const resultsContainer = document.querySelector('.results-container');
+    const severityContainer = document.querySelector('.severity-container');
+    if (resultsContainer && severityContainer) {
+        resultsContainer.insertBefore(warning, severityContainer);
+    }
 }
 
 function showError(message) {
     const errorDiv = document.createElement('div');
-    errorDiv.className = 'bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative';
+    errorDiv.className = 'bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4';
     errorDiv.role = 'alert';
     errorDiv.innerHTML = `
         <strong class="font-bold">Error!</strong>
         <span class="block sm:inline">${message}</span>
+        <span class="absolute top-0 bottom-0 right-0 px-4 py-3" onclick="this.parentElement.remove()">
+            <svg class="fill-current h-6 w-6 text-red-500" role="button" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                <title>Close</title>
+                <path d="M14.348 14.849a1.2 1.2 0 0 1-1.697 0L10 11.819l-2.651 3.029a1.2 1.2 0 1 1-1.697-1.697l2.758-3.15-2.759-3.152a1.2 1.2 0 1 1 1.697-1.697L10 8.183l2.651-3.031a1.2 1.2 0 1 1 1.697 1.697l-2.758 3.152 2.758 3.15a1.2 1.2 0 0 1 0 1.698z"/>
+            </svg>
+        </span>
     `;
-    document.querySelector('.diagnosis-form').prepend(errorDiv);
-    setTimeout(() => errorDiv.remove(), 5000);
-}
-
-function getSeverityText(severity) {
-    if (severity > 70) return 'Severe';
-    if (severity > 40) return 'Moderate';
-    return 'Mild';
-}
-
-function showResults() {
-    const resultSection = document.getElementById('resultSection');
-    resultSection.classList.remove('hidden');
-    resultSection.classList.add('active');
     
-    // Scroll to results
-    resultSection.scrollIntoView({ behavior: 'smooth' });
+    const form = document.querySelector('.diagnosis-form');
+    if (form) {
+        form.insertBefore(errorDiv, form.firstChild);
+    }
+    
+    setTimeout(() => {
+        if (errorDiv.parentNode) {
+            errorDiv.remove();
+        }
+    }, 5000);
 }
 
-// Handle window resize
-window.addEventListener('resize', () => {
-    if (window.innerWidth > 600) {
-        sidebar.classList.remove('active');
-    }
-});
+function getUrgencyText(urgencyLevel) {
+    if (urgencyLevel > 70) return 'High Urgency';
+    if (urgencyLevel > 40) return 'Moderate Urgency';
+    return 'Low Urgency';
+}

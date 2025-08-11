@@ -1,35 +1,42 @@
+// Main JS
 // mobile navigation
 const mobileNavToggle = document.querySelector('.hamburger-menu');
 const mobileNav = document.querySelector('.mobile-nav');
 const mobileNavClose = document.querySelector('.mobile-nav-close');
 
-mobileNavToggle.addEventListener('click', () => {
-    mobileNavToggle.classList.toggle('active');
-    mobileNav.classList.toggle('active');
-    document.body.style.overflow = mobileNav.classList.contains('active') ? 'hidden' : '';
-});
+if (mobileNavToggle && mobileNav) {
+    mobileNavToggle.addEventListener('click', () => {
+        mobileNavToggle.classList.toggle('active');
+        mobileNav.classList.toggle('active');
+        document.body.style.overflow = mobileNav.classList.contains('active') ? 'hidden' : '';
+    });
+}
 
 // Close mobile nav with close button
 if (mobileNavClose) {
     mobileNavClose.addEventListener('click', () => {
-        mobileNavToggle.classList.remove('active');
-        mobileNav.classList.remove('active');
-        document.body.style.overflow = '';
+        if (mobileNavToggle && mobileNav) {
+            mobileNavToggle.classList.remove('active');
+            mobileNav.classList.remove('active');
+            document.body.style.overflow = '';
+        }
     });
 }
 
 // Close mobile nav when clicking a link
 document.querySelectorAll('.mobile-nav a').forEach(link => {
     link.addEventListener('click', () => {
-        mobileNavToggle.classList.remove('active');
-        mobileNav.classList.remove('active');
-        document.body.style.overflow = '';
+        if (mobileNavToggle && mobileNav) {
+            mobileNavToggle.classList.remove('active');
+            mobileNav.classList.remove('active');
+            document.body.style.overflow = '';
+        }
     });
 });
 
 // Close mobile nav when clicking outside
 document.addEventListener('click', (e) => {
-    if (!mobileNav.contains(e.target) && !mobileNavToggle.contains(e.target)) {
+    if (mobileNav && mobileNavToggle && !mobileNav.contains(e.target) && !mobileNavToggle.contains(e.target)) {
         mobileNavToggle.classList.remove('active');
         mobileNav.classList.remove('active');
         document.body.style.overflow = '';
@@ -40,13 +47,15 @@ document.addEventListener('click', (e) => {
 const sidebarToggle = document.querySelector('.sidebar-toggle');
 const sidebar = document.querySelector('.sidebar');
 
-sidebarToggle.addEventListener('click', () => {
-    sidebar.classList.toggle('active');
-});
+if (sidebarToggle && sidebar) {
+    sidebarToggle.addEventListener('click', () => {
+        sidebar.classList.toggle('active');
+    });
+}
 
 // Close sidebar when clicking outside on mobile
 document.addEventListener('click', (e) => {
-    if (window.innerWidth <= 600) {
+    if (window.innerWidth <= 600 && sidebar && sidebarToggle) {
         if (!sidebar.contains(e.target) && !sidebarToggle.contains(e.target)) {
             sidebar.classList.remove('active');
         }
@@ -56,6 +65,13 @@ document.addEventListener('click', (e) => {
 // Create floating particles
 function createParticles() {
     const particlesContainer = document.getElementById('particles');
+    
+    // Check if particles container exists
+    if (!particlesContainer) {
+        console.warn('Particles container not found');
+        return;
+    }
+    
     const particleCount = 50;
 
     for (let i = 0; i < particleCount; i++) {
@@ -85,9 +101,12 @@ function createParticles() {
 document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     anchor.addEventListener('click', function (e) {
         e.preventDefault();
-        document.querySelector(this.getAttribute('href')).scrollIntoView({
-            behavior: 'smooth'
-        });
+        const target = document.querySelector(this.getAttribute('href'));
+        if (target) {
+            target.scrollIntoView({
+                behavior: 'smooth'
+            });
+        }
     });
 });
 
@@ -112,5 +131,14 @@ document.querySelectorAll('.feature-card').forEach(card => {
     observer.observe(card);
 });
 
+// Handle window resize
+window.addEventListener('resize', () => {
+    if (window.innerWidth > 600 && sidebar) {
+        sidebar.classList.remove('active');
+    }
+});
+
 // Initialize
-createParticles();
+document.addEventListener('DOMContentLoaded', function() {
+    createParticles();
+});

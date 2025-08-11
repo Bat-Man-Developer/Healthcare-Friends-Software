@@ -1,4 +1,5 @@
 <?php
+// Diagnosis API
 header('Content-Type: application/json');
 header('Access-Control-Allow-Origin: *');
 header('Access-Control-Allow-Methods: POST');
@@ -6,22 +7,29 @@ header('Access-Control-Allow-Headers: Content-Type');
 
 require_once('connection.php');
 
-class DiagnosisSystem {
+class FreeAssessmentSystem {
     private $conn;
     private $data;
     private $symptomWeightCache = [];
-    private const MIN_CONFIDENCE_THRESHOLD = 30;
+    private const MIN_CONFIDENCE_THRESHOLD = 25;
     private const SEVERITY_MODIFIERS = [
         'age_factor' => [
-            'child' => 1.2,
-            'elderly' => 1.3,
-            'adult' => 1.0
+            '0-12' => 1.3,
+            '13-17' => 1.1,
+            '18-29' => 1.0,
+            '30-49' => 1.0,
+            '50-64' => 1.1,
+            '65+' => 1.3
         ],
         'risk_factor' => [
-            'smoking' => 1.2,
-            'obesity' => 1.15,
-            'diabetes' => 1.25,
-            'hypertension' => 1.2
+            'diabetes' => 1.2,
+            'hypertension' => 1.15,
+            'heart_disease' => 1.3,
+            'asthma' => 1.1,
+            'cancer_history' => 1.25,
+            'autoimmune' => 1.2,
+            'current' => 1.2, // smoking
+            'heavy' => 1.15   // alcohol
         ]
     ];
     
@@ -32,25 +40,28 @@ class DiagnosisSystem {
     }
 
     /**
-     * Sanitize and validate input data
+     * Sanitize and validate input data (no personal info stored)
      */
     private function sanitizeInput($data) {
         $sanitized = [];
         $sanitized['mainSymptom'] = strip_tags(strtolower(trim($data['mainSymptom'])));
         $sanitized['duration'] = filter_var($data['duration'], FILTER_VALIDATE_INT);
+        $sanitized['severity'] = filter_var($data['severity'], FILTER_VALIDATE_INT);
         $sanitized['symptoms'] = array_map(function($symptom) {
             return strip_tags(strtolower(trim($symptom)));
         }, $data['symptoms'] ?? []);
-        $sanitized['age'] = strip_tags($data['age'] ?? 'adult');
-        $sanitized['riskFactors'] = array_filter($data['riskFactors'] ?? [], function($factor) {
-            return in_array($factor, array_keys(self::SEVERITY_MODIFIERS['risk_factor']));
-        });
-        $sanitized['userId'] = filter_var($data['userId'] ?? null, FILTER_VALIDATE_INT);
+        $sanitized['ageRange'] = strip_tags($data['ageRange'] ?? '18-29');
+        $sanitized['biologicalSex'] = strip_tags($data['biologicalSex'] ?? '');
+        $sanitized['conditions'] = array_filter($data['conditions'] ?? []);
+        $sanitized['smoking'] = strip_tags($data['smoking'] ?? 'never');
+        $sanitized['alcohol'] = strip_tags($data['alcohol'] ?? 'none');
+        $sanitized['exercise'] = strip_tags($data['exercise'] ?? 'none');
+        
         return $sanitized;
     }
 
     /**
-     * Preload symptom weights for better performance
+     * Load symptom weights for assessment
      */
     private function loadSymptomWeights() {
         $stmt = $this->conn->prepare("
@@ -71,7 +82,7 @@ class DiagnosisSystem {
     }
 
     /**
-     * Enhanced match score calculation with symptom relationships
+     * Calculate match score based on symptoms
      */
     private function calculateMatchScore($conditionId, $userSymptoms) {
         if (!isset($this->symptomWeightCache[$conditionId])) {
@@ -91,10 +102,10 @@ class DiagnosisSystem {
             }
         }
 
-        // Apply category bonus for multiple symptoms in same category
+        // Bonus for multiple symptoms in same category
         foreach ($categoryMatches as $matches) {
             if ($matches > 1) {
-                $matchScore *= (1 + ($matches * 0.1)); // 10% bonus per additional symptom in same category
+                $matchScore *= (1 + ($matches * 0.1));
             }
         }
         
@@ -102,40 +113,45 @@ class DiagnosisSystem {
     }
 
     /**
-     * Enhanced severity calculation with multiple factors
+     * Calculate urgency level (not severity to avoid medical diagnosis)
      */
-    private function calculateSeverity($duration, $symptomCount, $matchScore) {
-        $severityBase = 30;
+    private function calculateUrgencyLevel($duration, $userSeverity, $matchScore) {
+        $baseUrgency = 20;
         
         // Duration factor
         $durationMultiplier = [
-            '1' => 0.8,  // Less than 24 hours
+            '1' => 0.9,  // Less than 24 hours
             '2' => 1.0,  // 1-3 days
-            '3' => 1.2,  // 4-7 days
-            '4' => 1.5   // More than a week
+            '3' => 1.1,  // 4-7 days
+            '4' => 1.3,  // 1-2 weeks
+            '5' => 1.5   // More than 2 weeks
         ];
         
-        $ageFactor = self::SEVERITY_MODIFIERS['age_factor'][$this->data['age']] ?? 1.0;
+        $ageFactor = self::SEVERITY_MODIFIERS['age_factor'][$this->data['ageRange']] ?? 1.0;
         
         // Calculate risk factor multiplier
         $riskMultiplier = 1.0;
-        foreach ($this->data['riskFactors'] as $factor) {
-            $riskMultiplier *= self::SEVERITY_MODIFIERS['risk_factor'][$factor] ?? 1.0;
+        foreach ($this->data['conditions'] as $condition) {
+            $riskMultiplier *= self::SEVERITY_MODIFIERS['risk_factor'][$condition] ?? 1.0;
         }
         
+        // Add lifestyle risk factors
+        $riskMultiplier *= self::SEVERITY_MODIFIERS['risk_factor'][$this->data['smoking']] ?? 1.0;
+        $riskMultiplier *= self::SEVERITY_MODIFIERS['risk_factor'][$this->data['alcohol']] ?? 1.0;
+        
         $durationFactor = $durationMultiplier[$duration] ?? 1.0;
-        $symptomFactor = min(($symptomCount / 10), 1.5);
+        $severityFactor = $userSeverity / 10;
         $matchFactor = $matchScore / 100;
         
-        $severity = $severityBase * $durationFactor * $symptomFactor * $matchFactor * $ageFactor * $riskMultiplier;
+        $urgency = $baseUrgency * $durationFactor * $severityFactor * $matchFactor * $ageFactor * $riskMultiplier;
         
-        return min(100, max(0, round($severity)));
+        return min(100, max(0, round($urgency)));
     }
 
     /**
-     * Get personalized recommendations based on severity and risk factors
+     * Get general recommendations (not medical advice)
      */
-    private function getRecommendations($conditionId, $severity) {
+    private function getRecommendations($conditionId, $urgencyLevel) {
         $stmt = $this->conn->prepare("
             SELECT recommendation, priority 
             FROM recommendations 
@@ -151,33 +167,26 @@ class DiagnosisSystem {
             $recommendations[] = $row['recommendation'];
         }
         
-        // Add severity-specific recommendations
-        if ($severity > 70) {
-            array_unshift($recommendations, "Seek immediate medical attention");
+        // Add urgency-specific recommendations
+        if ($urgencyLevel > 70) {
+            array_unshift($recommendations, "Consider seeking immediate medical attention");
+        } elseif ($urgencyLevel > 50) {
+            array_unshift($recommendations, "Consider scheduling an appointment with a healthcare provider soon");
+        } else {
+            array_unshift($recommendations, "Monitor symptoms and consider consulting a healthcare provider if they worsen");
         }
         
-        // Add risk factor specific recommendations
-        foreach ($this->data['riskFactors'] as $factor) {
-            $recommendations[] = $this->getRiskFactorRecommendation($factor);
-        }
+        // Add general wellness recommendations
+        $recommendations[] = "Stay hydrated and get adequate rest";
+        $recommendations[] = "Keep track of symptom changes";
         
         return array_unique($recommendations);
     }
 
-    private function getRiskFactorRecommendation($factor) {
-        $recommendations = [
-            'smoking' => 'Consider smoking cessation programs to improve overall health',
-            'obesity' => 'Consult with a nutritionist for weight management guidance',
-            'diabetes' => 'Monitor blood sugar levels regularly',
-            'hypertension' => 'Regular blood pressure monitoring is recommended'
-        ];
-        return $recommendations[$factor] ?? '';
-    }
-
     /**
-     * Main diagnosis function with confidence thresholds
+     * Main assessment function (provides information, not diagnosis)
      */
-    public function diagnose() {
+    public function assess() {
         try {
             $allSymptoms = array_merge([$this->data['mainSymptom']], $this->data['symptoms'] ?? []);
             
@@ -207,90 +216,65 @@ class DiagnosisSystem {
             }
             
             $bestMatch = $matches[0];
-            $severity = $this->calculateSeverity(
+            $urgencyLevel = $this->calculateUrgencyLevel(
                 $this->data['duration'],
-                count($allSymptoms),
+                $this->data['severity'],
                 $bestMatch['score']
             );
             
-            $recommendations = $this->getRecommendations($bestMatch['condition']['condition_id'], $severity);
+            $recommendations = $this->getRecommendations($bestMatch['condition']['condition_id'], $urgencyLevel);
             
-            if (!empty($this->data['userId'])) {
-                $this->saveDiagnosis($bestMatch['condition']['condition_id'], $severity);
-            }
+            // No personal data storage for free service
             
             return [
-                'condition' => $bestMatch['condition']['name'],
-                'description' => $bestMatch['condition']['description'],
-                'severity' => $severity,
-                'confidence' => round($bestMatch['score']),
+                'possible_condition' => $bestMatch['condition']['name'],
+                'information' => $bestMatch['condition']['description'],
+                'urgency_level' => $urgencyLevel,
+                'match_confidence' => round($bestMatch['score']),
                 'recommendations' => $recommendations,
-                'urgent' => $severity > 70,
-                'differential_diagnoses' => $this->getDifferentialDiagnoses($matches),
-                'risk_factors' => $this->data['riskFactors']
+                'seek_immediate_care' => $urgencyLevel > 70,
+                'disclaimer' => 'This assessment provides general information only and is not a medical diagnosis.',
+                'alternative_possibilities' => $this->getAlternativePossibilities($matches)
             ];
             
         } catch (Exception $e) {
-            throw new Exception('Error during diagnosis: ' . $e->getMessage());
+            throw new Exception('Error during assessment: ' . $e->getMessage());
         }
     }
 
     /**
-     * Get differential diagnoses from other high-scoring matches
+     * Get alternative possibilities
      */
-    private function getDifferentialDiagnoses($matches) {
-        $differential = [];
-        for ($i = 1; $i < min(4, count($matches)); $i++) {
+    private function getAlternativePossibilities($matches) {
+        $alternatives = [];
+        for ($i = 1; $i < min(3, count($matches)); $i++) {
             if ($matches[$i]['score'] > self::MIN_CONFIDENCE_THRESHOLD) {
-                $differential[] = [
+                $alternatives[] = [
                     'condition' => $matches[$i]['condition']['name'],
                     'confidence' => round($matches[$i]['score'])
                 ];
             }
         }
-        return $differential;
+        return $alternatives;
     }
 
     /**
-     * Save diagnosis to history
-     */
-    private function saveDiagnosis($conditionId, $severity) {
-        $stmt = $this->conn->prepare("
-            INSERT INTO diagnosis_history 
-            (user_id, condition_id, severity, main_symptom, additional_symptoms) 
-            VALUES (?, ?, ?, ?, ?)
-        ");
-        
-        $userId = $this->data['userId'];
-        $mainSymptom = $this->data['mainSymptom'];
-        $additionalSymptoms = json_encode($this->data['symptoms'] ?? []);
-        
-        $stmt->bind_param("iiiss", 
-            $userId, 
-            $conditionId, 
-            $severity, 
-            $mainSymptom, 
-            $additionalSymptoms
-        );
-        
-        $stmt->execute();
-    }
-
-    /**
-     * Generate default response when no match is found
+     * Generate default response when no clear match
      */
     private function generateDefaultResponse() {
         return [
-            'condition' => 'Unspecified Condition',
-            'description' => 'Based on the provided symptoms, a specific condition could not be determined.',
-            'severity' => 30,
-            'confidence' => 0,
+            'possible_condition' => 'Non-specific symptoms',
+            'information' => 'Based on the symptoms provided, a specific condition pattern could not be identified.',
+            'urgency_level' => 30,
+            'match_confidence' => 0,
             'recommendations' => [
-                'Consult with a healthcare professional for proper diagnosis',
-                'Monitor your symptoms and seek immediate care if they worsen',
-                'Keep a detailed record of your symptoms and their progression'
+                'Consider consulting with a healthcare professional for proper evaluation',
+                'Monitor symptoms and note any changes or worsening',
+                'Ensure adequate rest and hydration',
+                'Seek immediate care if symptoms become severe or concerning'
             ],
-            'urgent' => false
+            'seek_immediate_care' => false,
+            'disclaimer' => 'This assessment provides general information only and is not a medical diagnosis.'
         ];
     }
 }
@@ -307,9 +291,9 @@ try {
         throw new Exception('Invalid or missing required data');
     }
 
-    // Initialize diagnosis system and get results
-    $diagnosisSystem = new DiagnosisSystem($conn, $data);
-    $result = $diagnosisSystem->diagnose();
+    // Initialize assessment system and get results
+    $assessmentSystem = new FreeAssessmentSystem($conn, $data);
+    $result = $assessmentSystem->assess();
 
     echo json_encode($result);
 

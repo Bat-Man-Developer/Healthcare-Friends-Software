@@ -181,7 +181,6 @@
     margin-right: 0.5rem;
 }
 
-/* Fixed severity slider styles */
 .severity-slider-container {
     padding: 1rem 0;
     position: relative;
@@ -225,7 +224,6 @@
     background: #2b6cb0;
 }
 
-/* Fixed severity labels positioning */
 .severity-labels {
     display: flex;
     justify-content: space-between;
@@ -267,24 +265,6 @@
 
 .emergency-warning {
     border-color: #f56565;
-}
-
-@media (max-width: 768px) {
-    .diagnosis-form {
-        padding: 1rem;
-    }
-    
-    .grid {
-        grid-template-columns: 1fr !important;
-    }
-    
-    .submit-btn {
-        width: 100%;
-    }
-    
-    .severity-labels {
-        font-size: 0.75rem;
-    }
 }
 
 .diagnosis-results {
@@ -563,4 +543,44 @@
 
 .inline-block {
     display: inline-block;
+}
+
+/* Privacy notice styles */
+.privacy-notice {
+    background: #e8f4f8;
+    border: 1px solid #bee3f0;
+    border-radius: 0.5rem;
+    padding: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.privacy-notice h4 {
+    color: #2d3748;
+    margin-bottom: 0.5rem;
+    font-size: 1rem;
+    font-weight: 600;
+}
+
+.privacy-notice p {
+    color: #4a5568;
+    font-size: 0.875rem;
+    margin: 0;
+}
+
+@media (max-width: 768px) {
+    .diagnosis-form {
+        padding: 1rem;
+    }
+    
+    .grid {
+        grid-template-columns: 1fr !important;
+    }
+    
+    .submit-btn {
+        width: 100%;
+    }
+    
+    .severity-labels {
+        font-size: 0.75rem;
+    }
 }
