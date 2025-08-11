@@ -22,12 +22,6 @@ header("X-XSS-Protection: 1; mode=block");
 header("Referrer-Policy: strict-origin-when-cross-origin");
 //header("Permissions-Policy: geolocation=(), microphone=(), camera=()");
 
-//if user has already logged in then take user to account page
-if(!isset($_SESSION['logged_in'])){
-	header('location: login.php');
-	exit;
-}
-
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -989,6 +983,7 @@ if(!isset($_SESSION['logged_in'])){
         .dashboard-card:nth-child(4) {
             animation-delay: 0.6s;
         }
+
         .diagnosis-form {
             max-width: 1200px;
             margin: 0 auto;
@@ -1054,13 +1049,14 @@ if(!isset($_SESSION['logged_in'])){
             background-color: #f7fafc;
         }
 
-
         .symptom-checkbox input[type="checkbox"] {
             margin-right: 0.5rem;
         }
 
+        /* Fixed severity slider styles */
         .severity-slider-container {
             padding: 1rem 0;
+            position: relative;
         }
 
         .severity-slider {
@@ -1070,6 +1066,7 @@ if(!isset($_SESSION['logged_in'])){
             border-radius: 3px;
             outline: none;
             -webkit-appearance: none;
+            margin: 1rem 0;
         }
 
         .severity-slider::-webkit-slider-thumb {
@@ -1086,6 +1083,45 @@ if(!isset($_SESSION['logged_in'])){
             background: #2b6cb0;
         }
 
+        .severity-slider::-moz-range-thumb {
+            width: 20px;
+            height: 20px;
+            background: #4299e1;
+            border-radius: 50%;
+            cursor: pointer;
+            border: none;
+            transition: background-color 0.15s ease-in-out;
+        }
+
+        .severity-slider::-moz-range-thumb:hover {
+            background: #2b6cb0;
+        }
+
+        /* Fixed severity labels positioning */
+        .severity-labels {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 0.5rem;
+            font-size: 0.875rem;
+            color: #718096;
+            position: relative;
+        }
+
+        .severity-labels span {
+            position: relative;
+            text-align: center;
+            font-weight: 500;
+        }
+
+        .severity-labels span:first-child {
+            text-align: left;
+        }
+
+        .severity-labels span:last-child {
+            text-align: right;
+        }
+
         .submit-btn {
             background-color: #4299e1;
             color: white;
@@ -1093,6 +1129,8 @@ if(!isset($_SESSION['logged_in'])){
             border-radius: 0.375rem;
             font-weight: 600;
             transition: background-color 0.15s ease-in-out;
+            border: none;
+            cursor: pointer;
         }
 
         .submit-btn:hover {
@@ -1114,6 +1152,10 @@ if(!isset($_SESSION['logged_in'])){
             
             .submit-btn {
                 width: 100%;
+            }
+            
+            .severity-labels {
+                font-size: 0.75rem;
             }
         }
 
@@ -1144,6 +1186,16 @@ if(!isset($_SESSION['logged_in'])){
             animation: fadeIn 0.5s ease-out;
         }
 
+        .results-container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 2rem;
+            background: white;
+            border-radius: 0.5rem;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            display: none;
+        }
+
         .severity-container {
             margin: 1.5rem 0;
         }
@@ -1161,12 +1213,14 @@ if(!isset($_SESSION['logged_in'])){
             border-radius: 4px;
             overflow: hidden;
             margin-right: 1rem;
+            position: relative;
         }
 
         .severity-fill {
             height: 100%;
             background: var(--primary);
             transition: width 0.3s ease;
+            border-radius: 4px;
         }
 
         .severity-text {
@@ -1211,6 +1265,177 @@ if(!isset($_SESSION['logged_in'])){
             from { opacity: 0; }
             to { opacity: 1; }
         }
+
+        /* Grid utility classes */
+        .grid {
+            display: grid;
+        }
+
+        .grid-cols-1 {
+            grid-template-columns: repeat(1, minmax(0, 1fr));
+        }
+
+        .grid-cols-2 {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        .grid-cols-3 {
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+        }
+
+        .grid-cols-4 {
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+        }
+
+        @media (min-width: 768px) {
+            .md\:grid-cols-2 {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+            
+            .md\:grid-cols-3 {
+                grid-template-columns: repeat(3, minmax(0, 1fr));
+            }
+            
+            .md\:grid-cols-4 {
+                grid-template-columns: repeat(4, minmax(0, 1fr));
+            }
+        }
+
+        .gap-4 {
+            gap: 1rem;
+        }
+
+        .space-x-2 > * + * {
+            margin-left: 0.5rem;
+        }
+
+        .flex {
+            display: flex;
+        }
+
+        .items-center {
+            align-items: center;
+        }
+
+        .items-start {
+            align-items: flex-start;
+        }
+
+        .justify-between {
+            justify-content: space-between;
+        }
+
+        .mt-1 {
+            margin-top: 0.25rem;
+        }
+
+        .mt-2 {
+            margin-top: 0.5rem;
+        }
+
+        .mt-4 {
+            margin-top: 1rem;
+        }
+
+        .mt-6 {
+            margin-top: 1.5rem;
+        }
+
+        .mt-8 {
+            margin-top: 2rem;
+        }
+
+        .mb-2 {
+            margin-bottom: 0.5rem;
+        }
+
+        .mb-6 {
+            margin-bottom: 1.5rem;
+        }
+
+        .text-sm {
+            font-size: 0.875rem;
+        }
+
+        .text-lg {
+            font-size: 1.125rem;
+        }
+
+        .text-xl {
+            font-size: 1.25rem;
+        }
+
+        .font-semibold {
+            font-weight: 600;
+        }
+
+        .w-full {
+            width: 100%;
+        }
+
+        @media (min-width: 768px) {
+            .md\:w-auto {
+                width: auto;
+            }
+        }
+
+        .p-4 {
+            padding: 1rem;
+        }
+
+        .px-2 {
+            padding-left: 0.5rem;
+            padding-right: 0.5rem;
+        }
+
+        .py-1 {
+            padding-top: 0.25rem;
+            padding-bottom: 0.25rem;
+        }
+
+        .rounded {
+            border-radius: 0.25rem;
+        }
+
+        .rounded-lg {
+            border-radius: 0.5rem;
+        }
+
+        .bg-gray-50 {
+            background-color: #f9fafb;
+        }
+
+        .bg-blue-100 {
+            background-color: #dbeafe;
+        }
+
+        .bg-red-50 {
+            background-color: #fef2f2;
+        }
+
+        .text-blue-800 {
+            color: #1e40af;
+        }
+
+        .text-red-700 {
+            color: #b91c1c;
+        }
+
+        .text-gray-600 {
+            color: #4b5563;
+        }
+
+        .border-l-4 {
+            border-left-width: 4px;
+        }
+
+        .border-red-500 {
+            border-left-color: #ef4444;
+        }
+
+        .inline-block {
+            display: inline-block;
+        }
     </style>
 </head>
 <body>
@@ -1231,21 +1456,15 @@ if(!isset($_SESSION['logged_in'])){
         <?php require_once 'layouts/sidebar.php'; ?>
 
         <main class="main-content">
-            <h2 class="section-title"><br>New Diagnosis</h2>
-            
             <form class="diagnosis-form" id="diagnosisForm">
+                <h2 class="section-title"><br>New Diagnosis</h2>
                 <!-- Emergency Warning -->
                 <div class="emergency-warning bg-red-50 border-l-4 border-red-500 p-4 mb-6">
                     <div class="flex items-center">
-                        <div class="flex-shrink-0">
-                            <svg class="h-5 w-5 text-red-500" fill="currentColor" viewBox="0 0 20 20">
-                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>
-                            </svg>
-                        </div>
                         <div class="ml-3">
                             <p class="text-sm text-red-700">
                                 If you are experiencing chest pain, severe breathing difficulties, or other life-threatening symptoms, 
-                                please call emergency services (911) immediately or visit your nearest emergency room.
+                                please call emergency services (112) immediately or visit your nearest emergency room.
                             </p>
                         </div>
                     </div>
@@ -1580,11 +1799,11 @@ if(!isset($_SESSION['logged_in'])){
                     <div class="form-group mt-4">
                         <label for="severity">Severity Level</label>
                         <div class="severity-slider-container">
-                            <input type="range" id="severity" min="1" max="10" class="severity-slider" required>
-                            <div class="severity-labels flex justify-between text-sm">
-                                <span>Mild</span>
-                                <span>Moderate</span>
-                                <span>Severe</span>
+                            <input type="range" id="severity" min="1" max="10" value="5" class="severity-slider" required>
+                            <div class="severity-labels">
+                                <span>Mild (1-3)</span>
+                                <span>Moderate (4-7)</span>
+                                <span>Severe (8-10)</span>
                             </div>
                         </div>
                     </div>

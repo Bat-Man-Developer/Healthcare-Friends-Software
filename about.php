@@ -862,35 +862,35 @@ header("Referrer-Policy: strict-origin-when-cross-origin");
         }
 
         // Intersection Observer for timeline items
-        const observerOptions = {
+        const observerOptionsAboutPage = {
             threshold: 0.5
         };
 
-        const observer = new IntersectionObserver((entries) => {
+        const observerAboutPage = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
                     entry.target.classList.add('visible');
                 }
             });
-        }, observerOptions);
+        }, observerOptionsAboutPage);
 
         document.querySelectorAll('.timeline-item').forEach(item => {
-            observer.observe(item);
+            observerAboutPage.observe(item);
         });
 
         // Start counter animation when stats are in view
-        const statsObserver = new IntersectionObserver((entries) => {
+        const statsObserverAboutPage = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
                     document.querySelectorAll('.stat-number').forEach(stat => {
                         animateCounter(stat);
                     });
-                    statsObserver.unobserve(entry.target);
+                    statsObserverAboutPage.unobserve(entry.target);
                 }
             });
         }, { threshold: 0.5 });
 
-        statsObserver.observe(document.querySelector('.stats-grid'));
+        statsObserverAboutPage.observe(document.querySelector('.stats-grid'));
     </script>
     
     <!-- Main JS -->

@@ -7,8 +7,8 @@
         <ul class="nav-links">
             <li><a href="home.php">Home</a></li>
             <li><a href="about.php">About</a></li>
-            <li><a href="diagnosis.php">Diagnosis</a></li>
-            <?php if(isset($_SESSION['loggedin']) && $_SESSION['loggedin'] === true): ?>
+            <li><a href="diagnosis.php">Health Checkup</a></li>
+            <?php if(isset($_SESSION['logged_in']) && $_SESSION['logged_in'] === true): ?>
                 <li><a href="dashboard.php">Dashboard</a></li>
                 <li><a href="logout.php">Logout</a></li>
             <?php else: ?>
@@ -32,8 +32,8 @@
     <ul style="text-align: center">
         <li><a href="home.php">Home</a></li>
         <li><a href="about.php">About</a></li>
-        <li><a href="diagnosis.php">Diagnosis</a></li>
-        <?php if(isset($_SESSION['loggedin']) && $_SESSION['loggedin'] === true): ?>
+        <li><a href="diagnosis.php">Health Checkup</a></li>
+        <?php if(isset($_SESSION['logged_in']) && $_SESSION['logged_in'] === true): ?>
             <li><a href="dashboard.php">Dashboard</a></li>
             <li><a href="logout.php">Logout</a></li>
         <?php else: ?>
