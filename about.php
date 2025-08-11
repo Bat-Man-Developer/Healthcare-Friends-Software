@@ -791,12 +791,17 @@ header("Referrer-Policy: strict-origin-when-cross-origin");
                 <div class="team-member">
                     <div class="member-image">H</div>
                     <h3>Hulisani Tshishonga</h3>
-                    <p>Senior AI Software Developer</p>
+                    <p>Senior AI Software Developer I</p>
+                </div>
+                <div class="team-member">
+                    <div class="member-image">H</div>
+                    <h3>Hloni Tlou</h3>
+                    <p>Senior AI Software Developer II</p>
                 </div>
                 <div class="team-member">
                     <div class="member-image">R</div>
                     <h3>Remember Nyalungu</h3>
-                    <p>AI Software Developer Intern</p>
+                    <p>Junior AI Software Developer</p>
                 </div>
             </div>
         </div>
@@ -819,22 +824,6 @@ header("Referrer-Policy: strict-origin-when-cross-origin");
                     <p>Medical Experts</p>
                 </div>
             </div>
-        </div>
-    </section>
-
-    <section class="timeline">
-        <h2 class="section-title">Our Journey</h2>
-        <div class="timeline-item">
-            <h3>2020</h3>
-            <p>Founded with a vision to revolutionize healthcare diagnostics</p>
-        </div>
-        <div class="timeline-item">
-            <h3>2022</h3>
-            <p>Launched AI-powered diagnostic system</p>
-        </div>
-        <div class="timeline-item">
-            <h3>2024</h3>
-            <p>Expanded services globally</p>
         </div>
     </section>
 
