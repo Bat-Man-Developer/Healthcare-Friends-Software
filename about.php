@@ -787,41 +787,25 @@ header("Referrer-Policy: strict-origin-when-cross-origin");
                     <div class="member-image">K</div>
                     <h3>Kay Mudau</h3>
                     <p>Senior AI Web Developer</p>
+                    <a href="https://www.linkedin.com/in/kaymudau/" style="text-decoration: none;">Linkedin</a>
                 </div>
                 <div class="team-member">
                     <div class="member-image">H</div>
                     <h3>Hulisani Tshishonga</h3>
-                    <p>Senior AI Software Developer I</p>
+                    <p>Senior AI Software Developer</p>
+                    <a href="https://www.linkedin.com/in/hulisani-tshishonga-68236322b/" style="text-decoration: none;">Linkedin</a>
                 </div>
                 <div class="team-member">
-                    <div class="member-image">H</div>
-                    <h3>Hloni Tlou</h3>
-                    <p>Senior AI Software Developer II</p>
+                    <div class="member-image">L</div>
+                    <h3>Lehlohonolo Tlou</h3>
+                    <p>Senior AI Software Engineer</p>
+                    <a href="https://www.linkedin.com/in/lehlohonolo-tlou-a5001a1a5/" style="text-decoration: none;">Linkedin</a>
                 </div>
                 <div class="team-member">
                     <div class="member-image">R</div>
                     <h3>Remember Nyalungu</h3>
-                    <p>Junior AI Software Developer</p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <section class="stats-section">
-        <div class="about-content">
-            <h2 class="section-title">Our Impact</h2>
-            <div class="stats-grid">
-                <div class="stat-item">
-                    <div class="stat-number" data-target="100000">0</div>
-                    <p>Users Helped</p>
-                </div>
-                <div class="stat-item">
-                    <div class="stat-number" data-target="95">0</div>
-                    <p>Accuracy Rate (%)</p>
-                </div>
-                <div class="stat-item">
-                    <div class="stat-number" data-target="50">0</div>
-                    <p>Medical Experts</p>
+                    <p>Senior AI Cybersecurity Developer</p>
+                    <a href="https://www.linkedin.com/in/remember-nyalungu-934a59367/" style="text-decoration: none;">Linkedin</a>
                 </div>
             </div>
         </div>
@@ -829,58 +813,6 @@ header("Referrer-Policy: strict-origin-when-cross-origin");
 
     <!-- footer.php -->
     <?php require_once 'layouts/footer.php'; ?>
-
-    <script>
-        // Animate stats counter
-        function animateCounter(element) {
-            const target = parseInt(element.dataset.target);
-            const duration = 2000;
-            const steps = 50;
-            const stepValue = target / steps;
-            let current = 0;
-
-            const timer = setInterval(() => {
-                current += stepValue;
-                if (current >= target) {
-                    element.textContent = target;
-                    clearInterval(timer);
-                } else {
-                    element.textContent = Math.floor(current);
-                }
-            }, duration / steps);
-        }
-
-        // Intersection Observer for timeline items
-        const observerOptionsAboutPage = {
-            threshold: 0.5
-        };
-
-        const observerAboutPage = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add('visible');
-                }
-            });
-        }, observerOptionsAboutPage);
-
-        document.querySelectorAll('.timeline-item').forEach(item => {
-            observerAboutPage.observe(item);
-        });
-
-        // Start counter animation when stats are in view
-        const statsObserverAboutPage = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    document.querySelectorAll('.stat-number').forEach(stat => {
-                        animateCounter(stat);
-                    });
-                    statsObserverAboutPage.unobserve(entry.target);
-                }
-            });
-        }, { threshold: 0.5 });
-
-        statsObserverAboutPage.observe(document.querySelector('.stats-grid'));
-    </script>
     
     <!-- Main JS -->
     <script src="js/main.js"></script>

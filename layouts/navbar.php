@@ -1,8 +1,8 @@
 <nav class="navbar">
     <div class="nav-content">
-        <a href="index.php" class="logo">
+        <a href="home.php" class="logo">
             <div class="logo-icon">H</div>
-            HealthCare
+            HealthCare Friends
         </a>
         <ul class="nav-links">
             <li><a href="home.php">Home</a></li>
