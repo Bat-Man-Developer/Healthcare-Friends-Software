@@ -1,0 +1,732 @@
+/* ===== VIRTUAL DOCTOR MAIN CONTAINER ===== */
+.virtual-doctor-container {
+    display: flex;
+    height: 100vh;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    overflow: hidden;
+    position: fixed;
+    top: 0;
+    left: 250px;
+    width: calc(100% - 250px);
+    z-index: 50;
+}
+
+/* ===== DOCTOR SECTION ===== */
+.doctor-section {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+    position: relative;
+    min-width: 300px;
+}
+
+.doctor-avatar {
+    width: 300px;
+    height: 300px;
+    border-radius: 50%;
+    background: linear-gradient(45deg, #4CAF50, #45a049);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 120px;
+    color: white;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+    animation: gentle-pulse 3s ease-in-out infinite;
+    margin-bottom: 2rem;
+}
+
+@keyframes gentle-pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+}
+
+.doctor-info {
+    text-align: center;
+    color: white;
+    margin-bottom: 2rem;
+}
+
+.doctor-name {
+    font-size: 2rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+}
+
+.doctor-title {
+    font-size: 1.2rem;
+    opacity: 0.9;
+}
+
+.speaking-indicator {
+    display: none;
+    background: rgba(255,255,255,0.2);
+    padding: 1rem 2rem;
+    border-radius: 25px;
+    color: white;
+    font-size: 1rem;
+    animation: fade-in-out 2s infinite;
+}
+
+@keyframes fade-in-out {
+    0%, 100% { opacity: 0.7; }
+    50% { opacity: 1; }
+}
+
+/* ===== CONVERSATION SECTION ===== */
+.conversation-section {
+    flex: 1;
+    background: white;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    min-width: 350px;
+}
+
+.conversation-header {
+    background: #2c3e50;
+    color: white;
+    padding: 1.5rem;
+    text-align: center;
+}
+
+.conversation-area {
+    flex: 1;
+    padding: 2rem;
+    overflow-y: auto;
+    background: #f8f9fa;
+    max-height: calc(100vh - 300px);
+}
+
+.chat-message {
+    margin-bottom: 1.5rem;
+    animation: slide-in 0.3s ease-out;
+}
+
+@keyframes slide-in {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.doctor-message {
+    background: #e3f2fd;
+    padding: 1rem 1.5rem;
+    border-radius: 18px 18px 18px 4px;
+    border-left: 4px solid #2196f3;
+    margin-right: 2rem;
+}
+
+.patient-message {
+    background: #e8f5e8;
+    padding: 1rem 1.5rem;
+    border-radius: 18px 18px 4px 18px;
+    border-right: 4px solid #4caf50;
+    margin-left: 2rem;
+    text-align: right;
+}
+
+/* ===== INPUT SECTION ===== */
+.input-section {
+    padding: 2rem;
+    background: white;
+    border-top: 1px solid #e0e0e0;
+}
+
+.input-container {
+    display: flex;
+    gap: 1rem;
+    align-items: flex-end;
+}
+
+.text-input {
+    flex: 1;
+    padding: 1rem;
+    border: 2px solid #e0e0e0;
+    border-radius: 25px;
+    font-size: 1rem;
+    resize: none;
+    min-height: 50px;
+    max-height: 120px;
+}
+
+.text-input:focus {
+    outline: none;
+    border-color: #4caf50;
+}
+
+.voice-btn, .send-btn {
+    padding: 1rem;
+    border: none;
+    border-radius: 50%;
+    width: 60px;
+    height: 60px;
+    font-size: 1.5rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    flex-shrink: 0;
+}
+
+.voice-btn {
+    background: #ff5722;
+    color: white;
+}
+
+.voice-btn:hover {
+    background: #e64a19;
+    transform: scale(1.05);
+}
+
+.voice-btn.recording {
+    background: #f44336;
+    animation: pulse-red 1s infinite;
+}
+
+@keyframes pulse-red {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+}
+
+.send-btn {
+    background: #4caf50;
+    color: white;
+}
+
+.send-btn:hover {
+    background: #45a049;
+    transform: scale(1.05);
+}
+
+/* ===== FORM AND RESPONSES ===== */
+.diagnosis-form-section {
+    display: none;
+    padding: 2rem;
+    background: white;
+    max-height: 70vh;
+    overflow-y: auto;
+}
+
+.diagnosis-form-section.active {
+    display: block;
+}
+
+.quick-responses {
+    margin-bottom: 1rem;
+    padding: 0 2rem;
+}
+
+.quick-response-btn {
+    display: inline-block;
+    margin: 0.25rem;
+    padding: 0.5rem 1rem;
+    background: #f0f0f0;
+    border: 1px solid #ddd;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 0.9rem;
+}
+
+.quick-response-btn:hover {
+    background: #4caf50;
+    color: white;
+}
+
+/* ===== PROGRESS INDICATOR ===== */
+.progress-indicator {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    background: rgba(255,255,255,0.9);
+    padding: 1rem;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.progress-steps {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.progress-step {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: #e0e0e0;
+    transition: all 0.3s ease;
+}
+
+.progress-step.active {
+    background: #4caf50;
+}
+
+.progress-step.completed {
+    background: #2196f3;
+}
+
+/* ===== MODAL STYLES ===== */
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.5);
+    z-index: 2000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal-content {
+    background: white;
+    padding: 2rem;
+    border-radius: 10px;
+    max-width: 90%;
+    max-height: 90%;
+    overflow-y: auto;
+}
+
+.close {
+    float: right;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: #999;
+}
+
+.close:hover {
+    color: #333;
+}
+
+/* ===== RESPONSIVE DESIGN - MOBILE FIRST (1024px and below) ===== */
+@media (max-width: 1024px) {
+    .virtual-doctor-container {
+        position: static;
+        left: 0;
+        width: 100%;
+        flex-direction: column;
+        height: auto;
+        min-height: calc(100vh - 60px);
+        margin-top: 60px;
+    }
+
+    .doctor-section {
+        min-height: 35vh;
+        padding: 1.5rem;
+    }
+    
+    .doctor-avatar {
+        width: 200px;
+        height: 200px;
+        font-size: 80px;
+        margin-bottom: 1rem;
+    }
+
+    .doctor-name {
+        font-size: 1.6rem;
+    }
+    
+    .doctor-title {
+        font-size: 1rem;
+    }
+
+    .conversation-section {
+        min-width: auto;
+        flex: none;
+        height: 65vh;
+    }
+
+    .conversation-area {
+        max-height: calc(65vh - 200px);
+        padding: 1.5rem;
+    }
+
+    .input-section {
+        padding: 1.5rem;
+    }
+    
+    .quick-responses {
+        padding: 0 1.5rem;
+    }
+    
+    .progress-indicator {
+        position: relative;
+        top: auto;
+        right: auto;
+        margin: 1rem auto 0;
+        display: inline-block;
+    }
+    
+    .conversation-header {
+        padding: 1.2rem;
+    }
+    
+    .conversation-header h2 {
+        font-size: 1.4rem;
+    }
+    
+    .conversation-header p {
+        font-size: 0.95rem;
+    }
+    
+    .doctor-message, .patient-message {
+        padding: 1rem;
+        margin-left: 0.5rem;
+        margin-right: 0.5rem;
+        font-size: 0.95rem;
+    }
+    
+    .input-container {
+        gap: 0.75rem;
+    }
+    
+    .voice-btn, .send-btn {
+        width: 55px;
+        height: 55px;
+        font-size: 1.3rem;
+    }
+    
+    .text-input {
+        padding: 0.9rem;
+        font-size: 0.95rem;
+    }
+    
+    .quick-response-btn {
+        font-size: 0.85rem;
+        padding: 0.45rem 0.9rem;
+        margin: 0.2rem;
+    }
+}
+
+/* Tablet landscape and smaller desktops */
+@media (max-width: 768px) {
+    .doctor-section {
+        min-height: 30vh;
+        padding: 1rem;
+    }
+    
+    .doctor-avatar {
+        width: 150px;
+        height: 150px;
+        font-size: 60px;
+    }
+    
+    .doctor-name {
+        font-size: 1.4rem;
+    }
+    
+    .doctor-title {
+        font-size: 0.9rem;
+    }
+    
+    .conversation-section {
+        height: 70vh;
+    }
+    
+    .conversation-area {
+        max-height: calc(70vh - 180px);
+        padding: 1rem;
+    }
+    
+    .input-section {
+        padding: 1rem;
+    }
+    
+    .voice-btn, .send-btn {
+        width: 50px;
+        height: 50px;
+        font-size: 1.2rem;
+    }
+    
+    .speaking-indicator {
+        padding: 0.8rem 1.5rem;
+        font-size: 0.9rem;
+    }
+    
+    .progress-indicator {
+        padding: 0.8rem;
+        font-size: 0.85rem;
+    }
+    
+    .progress-step {
+        width: 10px;
+        height: 10px;
+    }
+}
+
+/* Mobile phones */
+@media (max-width: 480px) {
+    .virtual-doctor-container {
+        margin-top: 70px;
+    }
+    
+    .doctor-section {
+        min-height: 25vh;
+        padding: 0.75rem;
+    }
+    
+    .doctor-avatar {
+        width: 120px;
+        height: 120px;
+        font-size: 48px;
+    }
+    
+    .doctor-name {
+        font-size: 1.2rem;
+    }
+    
+    .doctor-title {
+        font-size: 0.8rem;
+    }
+    
+    .conversation-section {
+        height: 75vh;
+    }
+    
+    .conversation-area {
+        max-height: calc(75vh - 160px);
+        padding: 0.75rem;
+    }
+    
+    .doctor-message, .patient-message {
+        padding: 0.8rem;
+        margin-left: 0.25rem;
+        margin-right: 0.25rem;
+        font-size: 0.85rem;
+    }
+    
+    .input-section {
+        padding: 0.75rem;
+    }
+    
+    .voice-btn, .send-btn {
+        width: 45px;
+        height: 45px;
+        font-size: 1rem;
+    }
+    
+    .text-input {
+        padding: 0.75rem;
+        font-size: 0.85rem;
+    }
+    
+    .quick-response-btn {
+        font-size: 0.75rem;
+        padding: 0.35rem 0.7rem;
+        margin: 0.15rem;
+    }
+    
+    .conversation-header {
+        padding: 1rem;
+    }
+    
+    .conversation-header h2 {
+        font-size: 1.2rem;
+    }
+    
+    .conversation-header p {
+        font-size: 0.85rem;
+    }
+    
+    .progress-indicator {
+        padding: 0.6rem;
+        font-size: 0.75rem;
+    }
+    
+    .progress-step {
+        width: 8px;
+        height: 8px;
+    }
+}
+
+/* Very small screens */
+@media (max-width: 320px) {
+    .doctor-section {
+        min-height: 20vh;
+        padding: 0.5rem;
+    }
+    
+    .doctor-avatar {
+        width: 100px;
+        height: 100px;
+        font-size: 40px;
+    }
+    
+    .doctor-name {
+        font-size: 1rem;
+    }
+    
+    .doctor-title {
+        font-size: 0.75rem;
+    }
+    
+    .conversation-area {
+        padding: 0.5rem;
+    }
+    
+    .doctor-message, .patient-message {
+        padding: 0.6rem;
+        font-size: 0.8rem;
+        margin: 0.1rem;
+    }
+    
+    .input-section {
+        padding: 0.5rem;
+    }
+    
+    .voice-btn, .send-btn {
+        width: 40px;
+        height: 40px;
+        font-size: 0.9rem;
+    }
+    
+    .text-input {
+        padding: 0.6rem;
+        font-size: 0.8rem;
+    }
+    
+    .quick-response-btn {
+        font-size: 0.7rem;
+        padding: 0.25rem 0.5rem;
+        margin: 0.1rem;
+    }
+    
+    .progress-indicator {
+        padding: 0.5rem;
+    }
+    
+    .progress-step {
+        width: 6px;
+        height: 6px;
+        gap: 0.25rem;
+    }
+}
+
+/* Landscape orientation adjustments */
+@media (max-width: 1024px) and (orientation: landscape) and (max-height: 600px) {
+    .virtual-doctor-container {
+        flex-direction: row;
+        height: 100vh;
+        margin-top: 0;
+    }
+    
+    .doctor-section {
+        flex: 0 0 35%;
+        padding: 1rem;
+        min-height: auto;
+    }
+    
+    .doctor-avatar {
+        width: 120px;
+        height: 120px;
+        font-size: 48px;
+        margin-bottom: 0.5rem;
+    }
+    
+    .doctor-name {
+        font-size: 1.2rem;
+    }
+    
+    .doctor-title {
+        font-size: 0.85rem;
+    }
+    
+    .conversation-section {
+        flex: 1;
+        height: 100vh;
+    }
+    
+    .conversation-area {
+        max-height: calc(100vh - 180px);
+    }
+    
+    .progress-indicator {
+        position: absolute;
+        top: 0.5rem;
+        right: 0.5rem;
+        padding: 0.5rem;
+    }
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+    .virtual-doctor-container {
+        background: linear-gradient(135deg, #2d3748 0%, #1a202c 100%);
+    }
+    
+    .conversation-section {
+        background: #2d3748;
+        color: white;
+    }
+    
+    .text-input {
+        background: #4a5568;
+        color: white;
+        border-color: #4a5568;
+    }
+    
+    .doctor-message {
+        background: #4a5568;
+        color: white;
+    }
+    
+    .patient-message {
+        background: #2d5016;
+        color: white;
+    }
+}
+
+/* Prevent overflow and ensure proper scrolling */
+.virtual-doctor-container * {
+    box-sizing: border-box;
+}
+
+@media (max-width: 1024px) {
+    .conversation-area {
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+    
+    .virtual-doctor-container {
+        overflow: hidden;
+    }
+}
+
+/* High DPI screen adjustments */
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+    .doctor-avatar {
+        box-shadow: 0 25px 50px rgba(0,0,0,0.4);
+    }
+    
+    .virtual-doctor-container {
+        backdrop-filter: blur(5px);
+    }
+}
+
+/* ===== DESKTOP ADJUSTMENTS FOR SCREENS ABOVE 1024px ===== */
+@media (min-width: 1025px) {
+    .virtual-doctor-container {
+        /* Move 0% to the right and 10% down to account for sidebar and navbar */
+        left: calc(250px + 0%);
+        top: 10%;
+        width: calc(100% - 250px);
+        height: 90vh;
+    }
+    
+    /* Ensure the container doesn't overflow on smaller desktop screens */
+    @media (min-width: 1025px) and (max-width: 1366px) {
+        .virtual-doctor-container {
+            left: calc(250px + 0%);
+            width: calc(100% - 250px);
+        }
+    }
+    
+    /* For larger screens, maintain the full 20% offset */
+    @media (min-width: 1367px) {
+        .virtual-doctor-container {
+            left: calc(250px + 0%);
+            width: calc(100% - 250px);
+        }
+    }
+}

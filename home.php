@@ -811,7 +811,7 @@ header("Referrer-Policy: strict-origin-when-cross-origin");
 
     <div class="hero-buttons">
 
-    <a href="diagnosis.php" class="btn btn-primary">Free Health Checkup</a>
+    <a href="healthcheckup.php" class="btn btn-primary">Free Health Checkup</a>
 
     <a href="login.php" class="btn btn-secondary">Login</a>
 
@@ -819,7 +819,7 @@ header("Referrer-Policy: strict-origin-when-cross-origin");
 
     <?php else: ?>
 
-    <a href="diagnosis.php" class="btn btn-primary">Start Diagnosis</a>
+    <a href="healthcheckup.php" class="btn btn-primary">Start Diagnosis</a>
 
     <?php endif; ?>
 
@@ -915,7 +915,7 @@ header("Referrer-Policy: strict-origin-when-cross-origin");
         <div class="container">
             <h2>Ready to Take Control of Your Health?</h2>
             <p>Join thousands of users who trust our platform for their health concerns.</p>
-            <a href="diagnosis.php" class="btn btn-primary">Start Your Journey</a>
+            <a href="healthcheckup.php" class="btn btn-primary">Start Your Journey</a>
         </div>
     </section>
     </main>
