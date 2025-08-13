@@ -161,5 +161,6 @@ header("Referrer-Policy: strict-origin-when-cross-origin");
 
     <script src="js/doctorAvatar3D.js"></script>
     <script src="js/healthcheckup.js"></script>
+    <script src="js/main.js"></script>
 </body>
 </html>
