@@ -611,7 +611,7 @@ function initializeDoctorAvatar3D() {
                 
                 // Initialize 3D avatar
                 setTimeout(() => {
-                    doctorAvatar3D = new DoctorAvatar3D('doctorAvatar3D');
+                    doctorAvatar3D = new UltraRealisticDoctorAvatar3D('doctorAvatar3D');
                     
                     // Remove loading indicator
                     setTimeout(() => {
