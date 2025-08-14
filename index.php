@@ -217,7 +217,7 @@ header("Referrer-Policy: strict-origin-when-cross-origin");
 
         // Redirect after 5 seconds
         setTimeout(() => {
-            window.location.href = 'home.php';
+            window.location.href = 'healthcheckup.php';
         }, 5000);
 
         // Add dots to loading text
