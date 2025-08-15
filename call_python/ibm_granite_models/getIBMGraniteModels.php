@@ -1,6 +1,6 @@
 <?php
 /**
- * IBM Granite Models PHP Interface for Medical Diagnosis
+ * IBM Granite Models Connection Test Interface
  */
 
 // Clear any previous output and set headers
@@ -8,7 +8,7 @@ ob_start();
 header('Content-Type: application/json');
 header('Access-Control-Allow-Origin: *');
 header('Access-Control-Allow-Methods: POST, OPTIONS');
-header('Access-Control-Allow-Headers: Content-Type');
+header('Access-Control-Allow-Headers: Content-Type, X-CSRF-TOKEN');
 
 // Handle preflight requests
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
@@ -21,15 +21,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 ini_set('display_errors', 0);
 ini_set('log_errors', 1);
 
-class IBMGraniteModels
+class IBMGraniteConnectionTest
 {
     private $pythonExePath = "c:/Users/user/anaconda3/python.exe";
     private $scriptPath = "c:/Xampp/htdocs/Business Websites/healthcarefriends-website/python/ibm_granite_models/ibmGraniteModelsApi.py";
-    private $logFile = "c:/Xampp/htdocs/Business Websites/healthcarefriends-website/logs/healthcheckup.log";
+    private $logFile = "c:/Xampp/htdocs/Business Websites/healthcarefriends-website/logs/connection_test.log";
     private $configPath = "c:/Xampp/htdocs/Business Websites/healthcarefriends-website/config/ibm_config.json";
 
     public function __construct()
     {
+        // Convert relative paths to absolute
+        $this->scriptPath = realpath($this->scriptPath);
+        
         // Ensure directories exist
         $logDir = dirname($this->logFile);
         if (!is_dir($logDir)) {
@@ -52,7 +55,7 @@ class IBMGraniteModels
     private function loadConfigFromDB()
     {
         try {
-            require_once(__DIR__ . '/../../server/connection.php');
+            require_once('c:/Xampp/htdocs/Business Websites/healthcarefriends-website/server/connection.php');
             
             $config = [];
             $configKeys = ['project_id', 'endpoint_url', 'api_key', 'granite33_model', 'granite40_model', 'iam_token'];
@@ -65,6 +68,8 @@ class IBMGraniteModels
                 
                 if ($row = $result->fetch_assoc()) {
                     $config[$key] = $row['config_value'];
+                } else {
+                    $config[$key] = '';
                 }
                 $stmt->close();
             }
@@ -79,18 +84,22 @@ class IBMGraniteModels
         }
     }
 
-    private function executeCommand($modelType, $prompt)
+    private function executeConnectionTest($modelType, $prompt)
     {
         try {
             // Load configuration from database
             $config = $this->loadConfigFromDB();
             
-            if (empty($config['project_id']) || empty($config['iam_token'])) {
-                throw new Exception('Missing required configuration. Please configure IBM Watson settings.');
+            if (empty($config['project_id'])) {
+                throw new Exception('Project ID not configured. Please configure IBM Watson settings.');
+            }
+            
+            if (empty($config['api_key']) && empty($config['iam_token'])) {
+                throw new Exception('Neither API key nor IAM token configured. Please provide authentication credentials.');
             }
             
             // Create temporary files
-            $tempPromptFile = tempnam(sys_get_temp_dir(), 'medical_prompt_');
+            $tempPromptFile = tempnam(sys_get_temp_dir(), 'connection_test_');
             if ($tempPromptFile === false) {
                 throw new Exception('Failed to create temporary prompt file');
             }
@@ -100,16 +109,18 @@ class IBMGraniteModels
                 throw new Exception('Failed to write prompt file');
             }
             
+            // Prepare command arguments
             $escapedPythonScript = escapeshellarg($this->scriptPath);
             $escapedModelType = escapeshellarg($modelType);
             $escapedPromptFile = escapeshellarg($tempPromptFile);
             $escapedConfigFile = escapeshellarg($this->configPath);
             
-            // Updated command with config file
-            $fullCommand = $this->pythonExePath . " " . $escapedPythonScript . " " . $escapedModelType . " " . $escapedPromptFile . " " . $escapedConfigFile . " 2>nul";
+            // Build the command
+            $fullCommand = $this->pythonExePath . " " . $escapedPythonScript . " " . $escapedModelType . " " . $escapedPromptFile . " " . $escapedConfigFile . " 2>&1";
             
-            $this->logMessage("Executing medical diagnosis command");
+            $this->logMessage("Executing connection test command: " . $fullCommand);
             
+            // Execute the command
             $output = shell_exec($fullCommand);
             
             // Clean up temp files
@@ -119,20 +130,20 @@ class IBMGraniteModels
             
             return $output;
         } catch (Exception $e) {
-            throw new Exception('Command execution error: ' . $e->getMessage());
+            throw new Exception('Connection test execution error: ' . $e->getMessage());
         }
     }
 
-    public function getModelResponse($modelType, $prompt)
+    public function testConnection($modelType, $prompt)
     {
         try {
-            $this->logMessage("Medical diagnosis request - Type: {$modelType}, Prompt length: " . strlen($prompt));
+            $this->logMessage("Starting connection test - Type: {$modelType}");
 
             // Validate inputs
             if (empty($modelType) || empty($prompt)) {
                 return [
                     'success' => false,
-                    'error' => 'Model type and prompt are required'
+                    'error' => 'Model type and prompt are required for connection test'
                 ];
             }
 
@@ -144,19 +155,11 @@ class IBMGraniteModels
                 ];
             }
 
-            // Increased limit for medical prompts
-            if (strlen($prompt) > 10000) {
-                return [
-                    'success' => false,
-                    'error' => 'Prompt too long. Maximum 10000 characters allowed'
-                ];
-            }
-
             // Check if Python script exists
             if (!file_exists($this->scriptPath)) {
                 return [
                     'success' => false,
-                    'error' => 'Medical diagnosis script not found at: ' . $this->scriptPath
+                    'error' => 'Python script not found at: ' . $this->scriptPath
                 ];
             }
 
@@ -168,13 +171,13 @@ class IBMGraniteModels
                 ];
             }
 
-            // Execute the command
-            $output = $this->executeCommand($modelType, $prompt);
+            // Execute the connection test
+            $output = $this->executeConnectionTest($modelType, $prompt);
 
             if ($output === null || $output === false) {
                 return [
                     'success' => false,
-                    'error' => 'Failed to execute medical diagnosis script'
+                    'error' => 'Failed to execute Python connection test script'
                 ];
             }
 
@@ -182,15 +185,31 @@ class IBMGraniteModels
             if (empty($output)) {
                 return [
                     'success' => false,
-                    'error' => 'Medical diagnosis script produced no output'
+                    'error' => 'Python script produced no output'
                 ];
             }
 
-            $this->logMessage("Python script output received: " . substr($output, 0, 200) . "...");
+            $this->logMessage("Python script output: " . substr($output, 0, 500) . "...");
 
             // Extract JSON from output (last line should be JSON)
             $lines = explode("\n", $output);
-            $jsonLine = end($lines);
+            $jsonLine = '';
+            
+            // Find the last line that looks like JSON
+            for ($i = count($lines) - 1; $i >= 0; $i--) {
+                $line = trim($lines[$i]);
+                if (!empty($line) && (substr($line, 0, 1) === '{' || substr($line, 0, 1) === '[')) {
+                    $jsonLine = $line;
+                    break;
+                }
+            }
+            
+            if (empty($jsonLine)) {
+                return [
+                    'success' => false,
+                    'error' => 'No JSON response found in script output. Output: ' . substr($output, 0, 500)
+                ];
+            }
             
             // Try to decode JSON output
             $result = json_decode($jsonLine, true);
@@ -198,7 +217,7 @@ class IBMGraniteModels
             if (json_last_error() !== JSON_ERROR_NONE) {
                 return [
                     'success' => false,
-                    'error' => 'Invalid JSON response from medical diagnosis script. Error: ' . json_last_error_msg() . '. Output: ' . substr($output, 0, 500)
+                    'error' => 'Invalid JSON response from Python script. Error: ' . json_last_error_msg() . '. JSON: ' . $jsonLine
                 ];
             }
 
@@ -212,16 +231,17 @@ class IBMGraniteModels
             }
 
             // Return successful response
-            $this->logMessage("Successful medical diagnosis response received");
+            $this->logMessage("Connection test successful");
             return [
                 'success' => true,
-                'response' => $result['response'] ?? 'No response from model',
+                'message' => 'Connection successful! IBM Granite models are accessible.',
+                'response' => $result['response'] ?? 'Test response received',
                 'model_type' => $modelType,
                 'timestamp' => time(),
                 'processing_time' => $result['processing_time'] ?? null
             ];
         } catch (Exception $e) {
-            $this->logMessage("Error in getModelResponse: " . $e->getMessage());
+            $this->logMessage("Error in testConnection: " . $e->getMessage());
             return [
                 'success' => false,
                 'error' => $e->getMessage()
@@ -251,11 +271,11 @@ try {
         throw new Exception('Invalid JSON input: ' . json_last_error_msg());
     }
 
-    $modelType = $data['model_type'] ?? '';
-    $prompt = $data['prompt'] ?? '';
+    $modelType = $data['model_type'] ?? 'granite33';
+    $prompt = $data['prompt'] ?? 'Hello, this is a connection test.';
 
-    $graniteModels = new IBMGraniteModels();
-    $result = $graniteModels->getModelResponse($modelType, $prompt);
+    $connectionTest = new IBMGraniteConnectionTest();
+    $result = $connectionTest->testConnection($modelType, $prompt);
     
     // Clean output buffer before sending JSON
     ob_end_clean();

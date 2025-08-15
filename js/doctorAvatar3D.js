@@ -1,3 +1,4 @@
+// Doctor Avatar 3D JS
 // Ultra-Realistic 3D Doctor Avatar with Advanced Features
 class UltraRealisticDoctorAvatar3D {
     constructor(containerId) {

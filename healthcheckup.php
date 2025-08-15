@@ -33,9 +33,9 @@ header("Referrer-Policy: strict-origin-when-cross-origin");
     <meta name="csrf-token" content="<?php echo htmlspecialchars(hash_hmac('sha256', session_id(), 'Blackkarmaholyspirit.01234?')); ?>">
     <title>HealthCare Friends</title>
     <link rel="icon" href="assets/images/FCS_Holdix_Logo.png" type="image/x-icon">
-	<link rel="stylesheet" href="css/base.css">
-    <link rel="stylesheet" href="css/healthcheckup.css">
-    <link rel="stylesheet" href="css/doctorAvatar3D.css">
+	<link rel="stylesheet" href="assets/css/base.css">
+    <link rel="stylesheet" href="assets/css/healthcheckup.css">
+    <link rel="stylesheet" href="assets/css/doctorAvatar3D.css">
     <!-- Add the Three.js CDN -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <!-- Add jQuery for AJAX -->
@@ -158,7 +158,9 @@ header("Referrer-Policy: strict-origin-when-cross-origin");
             <div id="resultsContent"></div>
         </div>
     </div>
-
+    
+    <?php require_once 'layouts/footer.php'; ?>
+    
     <script src="js/doctorAvatar3D.js"></script>
     <script src="js/healthcheckup.js"></script>
     <script src="js/main.js"></script>

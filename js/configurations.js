@@ -1,10 +1,8 @@
-// Configuration Page JavaScript
+// Configurations JS
 $(document).ready(function() {
     // Get CSRF token
     function getCSRFToken() {
-        return $('meta[name="csrf-token"]').attr('content') || 
-               document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') ||
-               '<?php echo $_SESSION["csrf_token"] ?? ""; ?>';
+        return $('meta[name="csrf-token"]').attr('content') || '';
     }
 
     // Save configuration form
@@ -17,22 +15,21 @@ $(document).ready(function() {
         // Show loading state
         saveBtn.addClass('loading').prop('disabled', true).html('💾 Saving...');
         
-        const formData = new FormData();
-        formData.append('action', 'save_config');
-        formData.append('csrf_token', getCSRFToken());
-        formData.append('project_id', $('#project_id').val());
-        formData.append('endpoint_url', $('#endpoint_url').val());
-        formData.append('api_key', $('#api_key').val());
-        formData.append('granite33_model', $('#granite33_model').val());
-        formData.append('granite40_model', $('#granite40_model').val());
-        formData.append('iam_token', $('#iam_token').val());
+        const formData = {
+            action: 'save_config',
+            csrf_token: getCSRFToken(),
+            project_id: $('#project_id').val(),
+            endpoint_url: $('#endpoint_url').val(),
+            api_key: $('#api_key').val(),
+            granite33_model: $('#granite33_model').val(),
+            granite40_model: $('#granite40_model').val(),
+            iam_token: $('#iam_token').val()
+        };
         
         $.ajax({
             url: 'server/getconfigurations.php',
             type: 'POST',
             data: formData,
-            processData: false,
-            contentType: false,
             dataType: 'json',
             headers: {
                 'X-CSRF-TOKEN': getCSRFToken()
@@ -41,12 +38,21 @@ $(document).ready(function() {
                 if (response.success) {
                     showMessage(response.message, 'success');
                 } else {
-                    showMessage(response.message, 'error');
+                    showMessage(response.message || 'Failed to save configuration', 'error');
                 }
             },
             error: function(xhr, status, error) {
                 console.error('Save error:', error);
-                showMessage('Failed to save configuration. Please try again.', 'error');
+                let errorMessage = 'Failed to save configuration. Please try again.';
+                try {
+                    const response = JSON.parse(xhr.responseText);
+                    if (response.message) {
+                        errorMessage = response.message;
+                    }
+                } catch (e) {
+                    // Use default error message
+                }
+                showMessage(errorMessage, 'error');
             },
             complete: function() {
                 // Reset button state
@@ -55,7 +61,7 @@ $(document).ready(function() {
         });
     });
     
-    // Test connection
+    // Test connection using Python script
     $('#testBtn').on('click', function() {
         const testBtn = $(this);
         const originalText = testBtn.html();
@@ -89,45 +95,62 @@ $(document).ready(function() {
         testBtn.addClass('loading').prop('disabled', true).html('🔗 Testing...');
         testResult.hide();
         
-        const formData = new FormData();
-        formData.append('action', 'test_connection');
-        formData.append('csrf_token', getCSRFToken());
-        formData.append('project_id', $('#project_id').val());
-        formData.append('endpoint_url', $('#endpoint_url').val());
-        formData.append('api_key', $('#api_key').val());
-        formData.append('iam_token', $('#iam_token').val());
-        formData.append('granite33_model', $('#granite33_model').val());
+        // Prepare data for Python test
+        const testData = {
+            model_type: 'granite33',
+            prompt: 'Hello, this is a connection test. Please respond with a simple acknowledgment.',
+            test_connection: true
+        };
         
         $.ajax({
-            url: 'server/getconfigurations.php',
+            url: 'call_python/ibm_granite_models/getIBMGraniteModels.php',
             type: 'POST',
-            data: formData,
-            processData: false,
-            contentType: false,
+            data: JSON.stringify(testData),
+            contentType: 'application/json',
             dataType: 'json',
             headers: {
                 'X-CSRF-TOKEN': getCSRFToken()
             },
+            timeout: 60000, // 60 second timeout for connection test
             success: function(response) {
                 testResult.removeClass('test-success test-error');
                 
                 if (response.success) {
-                    testResult.addClass('test-success').html('✅ ' + response.message);
-                    showMessage(response.message, 'success');
+                    testResult.addClass('test-success').html(
+                        '✅ Connection successful!<br>' +
+                        '<small>Model: ' + (response.model_type || 'granite33') + '</small><br>' +
+                        '<small>Response time: ' + (response.processing_time || 'N/A') + 's</small>'
+                    );
+                    showMessage('Connection test successful! IBM Granite models are accessible.', 'success');
                 } else {
-                    testResult.addClass('test-error').html('❌ ' + response.message);
-                    showMessage(response.message, 'error');
+                    testResult.addClass('test-error').html('❌ Connection failed: ' + response.error);
+                    showMessage('Connection test failed: ' + response.error, 'error');
                 }
                 
                 testResult.show();
             },
             error: function(xhr, status, error) {
                 console.error('Test error:', error);
+                let errorMessage = 'Connection test failed. Please check your configuration.';
+                
+                if (status === 'timeout') {
+                    errorMessage = 'Connection test timed out. Please check your network connection and try again.';
+                } else {
+                    try {
+                        const response = JSON.parse(xhr.responseText);
+                        if (response.error) {
+                            errorMessage = 'Connection test failed: ' + response.error;
+                        }
+                    } catch (e) {
+                        // Use default error message
+                    }
+                }
+                
                 testResult.removeClass('test-success test-error')
                           .addClass('test-error')
-                          .html('❌ Connection test failed. Please check your configuration.')
+                          .html('❌ ' + errorMessage)
                           .show();
-                showMessage('Connection test failed. Please try again.', 'error');
+                showMessage(errorMessage, 'error');
             },
             complete: function() {
                 // Reset button state
@@ -151,24 +174,47 @@ $(document).ready(function() {
 // Show message function
 function showMessage(message, type) {
     // Remove existing messages
-    $('[id^="webmessage_"]').remove();
+    $('.webmessage').remove();
     
-    let messageClass = 'webmessage_green';
+    let messageClass = 'webmessage-success';
     if (type === 'error') {
-        messageClass = 'webmessage_red';
+        messageClass = 'webmessage-error';
     } else if (type === 'warning') {
-        messageClass = 'webmessage_yellow';
+        messageClass = 'webmessage-warning';
     }
     
     const messageDiv = $('<div>')
-        .attr('id', messageClass)
-        .addClass('text-center')
+        .addClass('webmessage ' + messageClass)
         .text(message)
-        .prependTo('body');
+        .css({
+            'position': 'fixed',
+            'top': '20px',
+            'right': '20px',
+            'z-index': '9999',
+            'padding': '15px 20px',
+            'border-radius': '5px',
+            'color': 'white',
+            'font-weight': 'bold',
+            'min-width': '300px',
+            'text-align': 'center'
+        });
+    
+    // Set background color based on type
+    if (type === 'success') {
+        messageDiv.css('background-color', '#28a745');
+    } else if (type === 'error') {
+        messageDiv.css('background-color', '#dc3545');
+    } else if (type === 'warning') {
+        messageDiv.css('background-color', '#ffc107').css('color', '#212529');
+    }
+    
+    $('body').append(messageDiv);
     
     // Auto remove after 5 seconds
     setTimeout(() => {
-        messageDiv.remove();
+        messageDiv.fadeOut(300, function() {
+            $(this).remove();
+        });
     }, 5000);
 }
 
@@ -237,6 +283,19 @@ $('<style>')
         .loading {
             opacity: 0.7;
             pointer-events: none;
+        }
+        .webmessage {
+            animation: slideIn 0.3s ease-out;
+        }
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
         }
     `)
     .appendTo('head');
