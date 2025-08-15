@@ -3,9 +3,9 @@
         <div class="footer-section">
             <h3>Quick Links</h3>
             <ul>
-                <li><a href="index.php">Home</a></li>
+                <li><a href="home.php">Home</a></li>
                 <li><a href="about.php">About</a></li>
-                <li><a href="diagnosis.php">Health Checkup</a></li>
+                <li><a href="healthcheckup.php">Health Checkup</a></li>
             </ul>
         </div>
         <div class="footer-section">
