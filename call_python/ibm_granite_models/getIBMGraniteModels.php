@@ -24,15 +24,21 @@ ini_set('log_errors', 1);
 class IBMGraniteModels
 {
     private $pythonExePath = "c:/Users/user/anaconda3/python.exe";
-    private $scriptPath = "c:/Xampp/htdocs/healthcarefriends-website/python/ibm_granite_models/ibmGraniteModelsApi.py";
-    private $logFile = "c:/Xampp/htdocs/healthcarefriends-website/logs/healthcheckup.log";
+    private $scriptPath = "c:/Xampp/htdocs/Business Websites/healthcarefriends-website/python/ibm_granite_models/ibmGraniteModelsApi.py";
+    private $logFile = "c:/Xampp/htdocs/Business Websites/healthcarefriends-website/logs/healthcheckup.log";
+    private $configPath = "c:/Xampp/htdocs/Business Websites/healthcarefriends-website/config/ibm_config.json";
 
     public function __construct()
     {
-        // Ensure log directory exists
+        // Ensure directories exist
         $logDir = dirname($this->logFile);
         if (!is_dir($logDir)) {
             mkdir($logDir, 0755, true);
+        }
+        
+        $configDir = dirname($this->configPath);
+        if (!is_dir($configDir)) {
+            mkdir($configDir, 0755, true);
         }
     }
 
@@ -40,13 +46,50 @@ class IBMGraniteModels
     {
         $timestamp = date('Y-m-d H:i:s');
         $logEntry = "[{$timestamp}] {$message}" . PHP_EOL;
-        file_put_contents($this.logFile, $logEntry, FILE_APPEND | LOCK_EX);
+        file_put_contents($this->logFile, $logEntry, FILE_APPEND | LOCK_EX);
+    }
+
+    private function loadConfigFromDB()
+    {
+        try {
+            require_once(__DIR__ . '/../../server/connection.php');
+            
+            $config = [];
+            $configKeys = ['project_id', 'endpoint_url', 'api_key', 'granite33_model', 'granite40_model', 'iam_token'];
+            
+            foreach ($configKeys as $key) {
+                $stmt = $conn->prepare("SELECT config_value FROM configurations WHERE config_key = ?");
+                $stmt->bind_param("s", $key);
+                $stmt->execute();
+                $result = $stmt->get_result();
+                
+                if ($row = $result->fetch_assoc()) {
+                    $config[$key] = $row['config_value'];
+                }
+                $stmt->close();
+            }
+            
+            // Save config to file for Python script
+            file_put_contents($this->configPath, json_encode($config, JSON_PRETTY_PRINT));
+            
+            return $config;
+        } catch (Exception $e) {
+            $this->logMessage("Failed to load config from DB: " . $e->getMessage());
+            return [];
+        }
     }
 
     private function executeCommand($modelType, $prompt)
     {
         try {
-            // Create a temporary prompt file to handle large prompts and special characters
+            // Load configuration from database
+            $config = $this->loadConfigFromDB();
+            
+            if (empty($config['project_id']) || empty($config['iam_token'])) {
+                throw new Exception('Missing required configuration. Please configure IBM Watson settings.');
+            }
+            
+            // Create temporary files
             $tempPromptFile = tempnam(sys_get_temp_dir(), 'medical_prompt_');
             if ($tempPromptFile === false) {
                 throw new Exception('Failed to create temporary prompt file');
@@ -60,15 +103,16 @@ class IBMGraniteModels
             $escapedPythonScript = escapeshellarg($this->scriptPath);
             $escapedModelType = escapeshellarg($modelType);
             $escapedPromptFile = escapeshellarg($tempPromptFile);
+            $escapedConfigFile = escapeshellarg($this->configPath);
             
-            // Use file-based approach for better handling of large prompts
-            $fullCommand = $this->pythonExePath . " " . $escapedPythonScript . " " . $escapedModelType . " " . $escapedPromptFile . " 2>nul";
+            // Updated command with config file
+            $fullCommand = $this->pythonExePath . " " . $escapedPythonScript . " " . $escapedModelType . " " . $escapedPromptFile . " " . $escapedConfigFile . " 2>nul";
             
             $this->logMessage("Executing medical diagnosis command");
             
             $output = shell_exec($fullCommand);
             
-            // Clean up temp file
+            // Clean up temp files
             if (file_exists($tempPromptFile)) {
                 unlink($tempPromptFile);
             }
@@ -154,7 +198,7 @@ class IBMGraniteModels
             if (json_last_error() !== JSON_ERROR_NONE) {
                 return [
                     'success' => false,
-                    'error' => 'Invalid JSON response from medical diagnosis script. Error: ' . json_last_error_msg()
+                    'error' => 'Invalid JSON response from medical diagnosis script. Error: ' . json_last_error_msg() . '. Output: ' . substr($output, 0, 500)
                 ];
             }
 

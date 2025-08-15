@@ -463,7 +463,16 @@ body {
     border-radius: 50%;
     padding: 0.8rem;
     box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-    cursor: pointer;
+}
+
+@media (max-width: 768px) {
+    .hamburger-menu {
+        display: block;
+    }
+    
+    .navbar {
+        display: none;
+    }
 }
 
 .hamburger-box {
@@ -479,9 +488,7 @@ body {
     margin-top: -2px;
 }
 
-.hamburger-inner, 
-.hamburger-inner::before, 
-.hamburger-inner::after {
+.hamburger-inner, .hamburger-inner::before, .hamburger-inner::after {
     width: 30px;
     height: 2px;
     background-color: var(--primary);
@@ -492,8 +499,7 @@ body {
     transition-timing-function: ease;
 }
 
-.hamburger-inner::before, 
-.hamburger-inner::after {
+.hamburger-inner::before, .hamburger-inner::after {
     content: "";
     display: block;
 }
@@ -506,6 +512,7 @@ body {
     bottom: -10px;
 }
 
+/* Spin animation */
 .hamburger-menu.active .hamburger-inner {
     transform: rotate(225deg);
     transition-delay: 0.12s;
@@ -524,6 +531,7 @@ body {
     transition: bottom 0.1s ease-out, transform 0.22s 0.12s cubic-bezier(0.215, 0.61, 0.355, 1);
 }
 
+/* Mobile nav styles */
 .mobile-nav {
     position: fixed;
     top: 0;
@@ -605,6 +613,16 @@ body {
     font-size: 2rem;
     color: var(--primary);
     line-height: 1;
+}
+
+@media (max-width: 768px) {
+    .navbar{
+        display: none;
+    }
+
+    .nav-links {
+        display: none;
+    }
 }
 
 /* ===== SIDEBAR TOGGLE BUTTON ===== */
@@ -866,5 +884,136 @@ body {
     .sidebar-toggle {
         padding: 0.5rem;
         font-size: 0.9rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .navbar {
+        display: none !important;
+    }
+    
+    .hamburger-menu {
+        display: block !important;
+    }
+    
+    .main-content {
+        padding: 1rem;
+        margin-top: 80px;
+    }
+    
+    .config-container {
+        padding: 1.5rem;
+        margin: 1rem 0;
+    }
+    
+    .config-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+    
+    .button-group {
+        flex-direction: column;
+        gap: 0.8rem;
+    }
+    
+    .btn {
+        width: 100%;
+        padding: 1rem;
+        font-size: 1rem;
+    }
+    
+    .page-title {
+        font-size: 2rem;
+    }
+    
+    .page-subtitle {
+        font-size: 1rem;
+    }
+    
+    /* Message positioning for mobile */
+    #webmessage_red,
+    #webmessage_green,
+    #webmessage_yellow {
+        top: 80px;
+        right: 10px;
+        left: 10px;
+        max-width: none;
+        margin: 0 auto;
+        font-size: 0.9rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .hamburger-menu {
+        top: 0.5rem;
+        right: 0.5rem;
+        padding: 10px;
+    }
+    
+    .mobile-nav ul li a {
+        font-size: 1.2rem;
+        padding: 0.8rem 1.5rem;
+    }
+    
+    .config-container {
+        padding: 1rem;
+        border-radius: 15px;
+    }
+    
+    .form-input {
+        padding: 0.8rem;
+        font-size: 0.9rem;
+    }
+    
+    .page-title {
+        font-size: 1.8rem;
+    }
+    
+    .mobile-nav-close {
+        width: 45px;
+        height: 45px;
+    }
+    
+    .mobile-nav-close span {
+        font-size: 1.8rem;
+    }
+}
+
+@media (max-width: 320px) {
+    .main-content {
+        padding: 0.5rem;
+    }
+    
+    .config-container {
+        padding: 0.8rem;
+        margin: 0.5rem 0;
+    }
+    
+    .page-title {
+        font-size: 1.6rem;
+    }
+    
+    .page-subtitle {
+        font-size: 0.9rem;
+    }
+    
+    .btn {
+        padding: 0.8rem;
+        font-size: 0.9rem;
+    }
+}
+
+/* Ensure desktop nav shows on larger screens */
+@media (min-width: 769px) {
+    .navbar {
+        display: block !important;
+    }
+    
+    .hamburger-menu {
+        display: none !important;
+    }
+    
+    .mobile-nav {
+        display: none !important;
     }
 }

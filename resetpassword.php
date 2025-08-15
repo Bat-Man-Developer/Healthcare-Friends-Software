@@ -802,6 +802,7 @@ include("server/getresetpassword.php");
     </style>
 </head>
 <body>
+    <div class="floating-particles" id="particles"></div>
     <!-- Navigation Bar -->
     <?php require_once 'layouts/navbar.php'; ?>
 

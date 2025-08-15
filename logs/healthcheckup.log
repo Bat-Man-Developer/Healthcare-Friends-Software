@@ -1,0 +1,9 @@
+[2025-08-14 20:36:29] Medical diagnosis request - Type: granite33, Prompt length: 715
+[2025-08-14 20:38:02] Medical diagnosis request - Type: granite33, Prompt length: 715
+[2025-08-14 20:38:02] Executing medical diagnosis command
+[2025-08-14 20:38:13] Python script output received: {"response": "\n\n1. Possible Conditions or Causes:\nA common cause of excessive coughing in young adults like yourself could be acute bronchitis, a respiratory infection causing inflammation in the b...
+[2025-08-14 20:38:13] Successful medical diagnosis response received
+[2025-08-14 20:47:57] Medical diagnosis request - Type: granite33, Prompt length: 811
+[2025-08-14 20:47:57] Executing medical diagnosis command
+[2025-08-14 20:48:10] Python script output received: {"response": "\n\n1. Possible Conditions or Causes:\nThe symptoms you've described could be due to several reasons, such as:\n- Nasal dryness leading to discomfort\n- A possible viral infection causin...
+[2025-08-14 20:48:10] Successful medical diagnosis response received

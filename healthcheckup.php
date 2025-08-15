@@ -57,7 +57,7 @@ header("Referrer-Policy: strict-origin-when-cross-origin");
     <?php } ?>
 
     <!-- Particles Container -->
-    <div id="particles"></div>
+    <div class="floating-particles" id="particles"></div>
 
     <?php require_once 'layouts/sidebar.php'; ?>
 
