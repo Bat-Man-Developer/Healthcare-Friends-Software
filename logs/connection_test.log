@@ -172,3 +172,29 @@
 [2025-08-16 13:13:16] Connection test successful
 [2025-08-16 18:15:38] Starting connection test - Type: granite33
 [2025-08-16 18:16:29] Starting connection test - Type: granite33
+[2025-08-16 18:17:45] Starting connection test - Type: granite33
+[2025-08-16 18:17:45] Executing connection test command: c:/Users/user/anaconda3/python.exe "C:\Xampp\htdocs\Business Websites\fcsholdix-healthcare-website\python\ibm_granite_models\ibmGraniteModelsApi.py" "granite33" "C:\Users\user\AppData\Local\Temp\conB389.tmp" "c:/Xampp/htdocs/Business Websites/fcsholdix-healthcare-website/config/ibm_config.json" 2>&1
+[2025-08-16 18:17:48] Python script output: [DEBUG] Script started with model_type: granite33
+[DEBUG] Prompt file: C:\Users\user\AppData\Local\Temp\conB389.tmp
+[DEBUG] Config file: c:/Xampp/htdocs/Business Websites/fcsholdix-healthcare-website/config/ibm_config.json
+[DEBUG] Configuration loaded successfully
+[DEBUG] Prompt loaded successfully, length: 78
+[DEBUG] Loaded configuration: {
+  "project_id": "43591b65-56f1-4b6d-9998-d334d24def24",
+  "endpoint_url": "https://us-south.ml.cloud.ibm.com",
+  "api_key": "***",
+  "granite33_model": "ibm...
+[2025-08-16 18:17:48] Connection test successful
+[2025-08-16 18:18:29] Starting connection test - Type: granite33
+[2025-08-16 18:18:29] Executing connection test command: c:/Users/user/anaconda3/python.exe "C:\Xampp\htdocs\Business Websites\fcsholdix-healthcare-website\python\ibm_granite_models\ibmGraniteModelsApi.py" "granite33" "C:\Users\user\AppData\Local\Temp\con5F6A.tmp" "c:/Xampp/htdocs/Business Websites/fcsholdix-healthcare-website/config/ibm_config.json" 2>&1
+[2025-08-16 18:18:32] Python script output: [DEBUG] Script started with model_type: granite33
+[DEBUG] Prompt file: C:\Users\user\AppData\Local\Temp\con5F6A.tmp
+[DEBUG] Config file: c:/Xampp/htdocs/Business Websites/fcsholdix-healthcare-website/config/ibm_config.json
+[DEBUG] Configuration loaded successfully
+[DEBUG] Prompt loaded successfully, length: 78
+[DEBUG] Loaded configuration: {
+  "project_id": "43591b65-56f1-4b6d-9998-d334d24def24",
+  "endpoint_url": "https://us-south.ml.cloud.ibm.com",
+  "api_key": "***",
+  "granite33_model": "ibm...
+[2025-08-16 18:18:32] Connection test successful
