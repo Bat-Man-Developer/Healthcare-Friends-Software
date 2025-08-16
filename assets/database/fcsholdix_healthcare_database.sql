@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Aug 11, 2025 at 10:02 PM
+-- Generation Time: Aug 16, 2025 at 06:05 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -18,7 +18,7 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Database: `healthcare_diagnosis_database`
+-- Database: `fcsholdix_healthcare_database`
 --
 
 -- --------------------------------------------------------
@@ -104,6 +104,32 @@ INSERT INTO `condition_symptoms` (`condition_id`, `symptom_id`, `weight`) VALUES
 (18, 26, 1),
 (18, 27, 0.9),
 (18, 28, 0.8);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `configurations`
+--
+
+CREATE TABLE `configurations` (
+  `id` int(11) NOT NULL,
+  `config_key` varchar(100) NOT NULL,
+  `config_value` text NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `configurations`
+--
+
+INSERT INTO `configurations` (`id`, `config_key`, `config_value`, `created_at`, `updated_at`) VALUES
+(1, 'project_id', '43591b65-56f1-4b6d-9998-d334d24def24', '2025-06-29 01:27:15', '2025-08-16 11:13:06'),
+(2, 'endpoint_url', 'https://us-south.ml.cloud.ibm.com', '2025-06-29 01:27:15', '2025-08-16 11:13:06'),
+(3, 'api_key', 'P_LEgQ4FwLNdQlluLXw1O1enpxON4HcxpA8zMvIHlVo1', '2025-06-29 01:27:15', '2025-08-16 11:13:06'),
+(4, 'granite33_model', 'ibm/granite-3-3-8b-instruct', '2025-06-29 01:27:15', '2025-08-16 11:13:06'),
+(5, 'granite40_model', 'ibm/granite-4-0-tiny', '2025-06-29 01:27:15', '2025-08-16 11:13:06'),
+(6, 'iam_token', 'eyJraWQiOiIyMDE5MDcyNCIsImFsZyI6IlJTMjU2In0.eyJpYW1faWQiOiJJQk1pZC02OTgwMDBaOTA1IiwiaWQiOiJJQk1pZC02OTgwMDBaOTA1IiwicmVhbG1pZCI6IklCTWlkIiwianRpIjoiMTk2MjUwZDYtZDYyZS00YmFhLWFiZmItMTNhNjNjYzEyNjE0IiwiaWRlbnRpZmllciI6IjY5ODAwMFo5MDUiLCJnaXZlbl9uYW1lIjoiS2F5IiwiZmFtaWx5X25hbWUiOiJNdWRhdSIsIm5hbWUiOiJLYXkgTXVkYXUiLCJlbWFpbCI6ImtrYXkubXVkYXUwMDhAZ21haWwuY29tIiwic3ViIjoia2theS5tdWRhdTAwOEBnbWFpbC5jb20iLCJhdXRobiI6eyJzdWIiOiJra2F5Lm11ZGF1MDA4QGdtYWlsLmNvbSIsImlhbV9pZCI6IklCTWlkLTY5ODAwMFo5MDUiLCJuYW1lIjoiS2F5IE11ZGF1IiwiZ2l2ZW5fbmFtZSI6IktheSIsImZhbWlseV9uYW1lIjoiTXVkYXUiLCJlbWFpbCI6ImtrYXkubXVkYXUwMDhAZ21haWwuY29tIn0sImFjY291bnQiOnsidmFsaWQiOnRydWUsImJzcyI6ImRiMWVmYWFlY2QyNTQ3ZDU4ZDk3MzdjMmM5ODgxNzhhIiwiaW1zX3VzZXJfaWQiOiIxNDMwNDU3MSIsImZyb3plbiI6dHJ1ZSwiaW1zIjoiMzAwMzEyNCJ9LCJtZmEiOnsiaW1zIjp0cnVlfSwiaWF0IjoxNzU1MzQyMTk2LCJleHAiOjE3NTUzNDU3OTYsImlzcyI6Imh0dHBzOi8vaWFtLmNsb3VkLmlibS5jb20vaWRlbnRpdHkiLCJncmFudF90eXBlIjoidXJuOmlibTpwYXJhbXM6b2F1dGg6Z3JhbnQtdHlwZTphcGlrZXkiLCJzY29wZSI6ImlibSBvcGVuaWQiLCJjbGllbnRfaWQiOiJkZWZhdWx0IiwiYWNyIjoxLCJhbXIiOlsicHdkIl19.WDeu9cMauVeOz9XYNArF4W9cW9IrrGbxdeHhtKgDUiikkkefRYl6q1nvQcCkeDoTqzbQpIlVQ2sOkz6eKhMdCztPJZO4jg0dvfJWvgnvgW6kQVN2fknw2AYrArkUsIW5VE6YS7Z1zxX6wuib_zgL2saPu4HNxiUL2fVSPcLAxtPum5z8Ee2D925H3MmL9MmsQ4FpH_zNqtYJ5PIq8CynysumQ2-Raao0PRAlbOVJMHtN1n2rrpJeHDvJ1rTa3mv7TUgLo_R6TYeVaQfKwdvnxx-8GwOeoRHElZVXgrFrCc7s31OjY9-Qs7xABDsljUfuVt6FmKxpMz4XBrP5BMHIHw', '2025-06-29 01:27:15', '2025-08-16 11:13:06');
 
 -- --------------------------------------------------------
 
@@ -296,6 +322,13 @@ ALTER TABLE `condition_symptoms`
   ADD KEY `symptom_id` (`symptom_id`);
 
 --
+-- Indexes for table `configurations`
+--
+ALTER TABLE `configurations`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `config_key` (`config_key`);
+
+--
 -- Indexes for table `diagnosis`
 --
 ALTER TABLE `diagnosis`
@@ -338,6 +371,12 @@ ALTER TABLE `users`
 --
 ALTER TABLE `conditions`
   MODIFY `condition_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=28;
+
+--
+-- AUTO_INCREMENT for table `configurations`
+--
+ALTER TABLE `configurations`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=149;
 
 --
 -- AUTO_INCREMENT for table `diagnosis`
