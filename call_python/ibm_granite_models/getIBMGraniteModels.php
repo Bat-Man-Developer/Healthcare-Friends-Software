@@ -1,6 +1,6 @@
 <?php
 /**
- * IBM Granite Models Connection Test Interface
+ * Get IBM Granite Models Interface
  */
 
 // Clear any previous output and set headers
@@ -24,9 +24,9 @@ ini_set('log_errors', 1);
 class IBMGraniteConnectionTest
 {
     private $pythonExePath = "c:/Users/user/anaconda3/python.exe";
-    private $scriptPath = "c:/Xampp/htdocs/Business Websites/healthcarefriends-website/python/ibm_granite_models/ibmGraniteModelsApi.py";
-    private $logFile = "c:/Xampp/htdocs/Business Websites/healthcarefriends-website/logs/connection_test.log";
-    private $configPath = "c:/Xampp/htdocs/Business Websites/healthcarefriends-website/config/ibm_config.json";
+    private $scriptPath = "c:/Xampp/htdocs/Business Websites/fcsholdix-healthcare-website/python/ibm_granite_models/ibmGraniteModelsApi.py";
+    private $logFile = "c:/Xampp/htdocs/Business Websites/fcsholdix-healthcare-website/logs/connection_test.log";
+    private $configPath = "c:/Xampp/htdocs/Business Websites/fcsholdix-healthcare-website/config/ibm_config.json";
 
     public function __construct()
     {
