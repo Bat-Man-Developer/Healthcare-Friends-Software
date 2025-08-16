@@ -55,8 +55,8 @@ class IBMGraniteConnectionTest
     private function loadConfigFromDB()
     {
         try {
-            require_once('c:/Xampp/htdocs/Business Websites/healthcarefriends-website/server/connection.php');
-            
+            require_once('c:/Xampp/htdocs/Business Websites/fcsholdix-healthcare-website/server/connection.php');
+
             $config = [];
             $configKeys = ['project_id', 'endpoint_url', 'api_key', 'granite33_model', 'granite40_model', 'iam_token'];
             
