@@ -10,43 +10,75 @@ Healthcare Friends - Virtual Health Consultant
 A sophisticated virtual health consultation platform powered by IBM watsonx Granite models and agentic AI technology. Healthcare Friends provides free, privacy-focused preliminary health assessments through an interactive 3D doctor avatar interface.
 
 🚀 Features
+
 Core Functionality
+
 •	🏥 Virtual Health Consultations: Comprehensive 5-step health assessment process
+
 •	🤖 3D Doctor Avatar: Interactive Three.js-powered virtual doctor with realistic animations
+
 •	🗣️ Voice Interaction: Speech recognition and text-to-speech capabilities
+
 •	🔒 Privacy-First: Zero personal data collection with session-based security
+
 •	📱 Responsive Design: Mobile-optimized interface for all devices
+
 •	🌐 Multi-language Support: Extensible internationalization framework
 
 AI-Powered Features
+
 •	🧠 Agentic AI System: Autonomous conversation management and diagnostic reasoning
+
 •	⚡ IBM watsonx Integration: Granite-3.3-8b-instruct model for medical analysis
+
 •	📊 Smart Symptom Analysis: Context-aware health assessment algorithms
+
 •	🎯 Personalized Recommendations: Tailored health guidance based on user input
+
 •	⚠️ Risk Assessment: Intelligent urgency level detection and triage
 
 Technical Features
+
 •	🔐 Enhanced Security: CSRF protection, XSS prevention, and secure headers
+
 •	🎨 Modern UI/UX: Glassmorphism design with floating particle effects
+
 •	📈 Real-time Processing: Asynchronous AI model calls with progress indicators
+
 •	🔧 Admin Configuration: Dynamic IBM watsonx model configuration interface
+
 •	📝 Comprehensive Logging: Detailed error tracking and performance monitoring
 
 🏗️ Architecture
+
 System Components
+
 Healthcare Friends/
+
 ├── 📁 assets/                    # Static assets (CSS, images, icons)
+
 ├── 📁 database/              # Database file for importing
+
 ├── 📁 call_python/              # Python integration layer
+
 │   └── 📁 ibm_granite_models/   # IBM watsonx Granite API handlers
+
 ├── 📁 config/                   # Configuration files
+
 ├── 📁 js/                       # Frontend JavaScript modules
+
 ├── 📁 layouts/                  # PHP layout components
+
 ├── 📁 logs/                     # Application logs
+
 ├── 📁 python/                   # Python AI model scripts
+
 ├── 📁 server/                   # Backend PHP scripts
+
 ├── 🔧 configurations.php        # Admin configuration interface
+
 ├── 🏥 healthcheckup.php                 # Main consultation interface
+
 └── 📚 README.md                 # Project documentation
 
 AI Architecture
